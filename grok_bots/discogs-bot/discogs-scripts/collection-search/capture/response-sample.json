@@ -7,393 +7,71 @@
     "folderId": 0,
     "direction": "DESC",
     "field": "ADDED",
-    "search": "Domingo Federico"
+    "search": "Example Artist"
   },
   "sha256Hash": "ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b",
-  "totalCount": 36,
+  "totalCount": 2,
+  "_note": "SYNTHETIC fixture \u2014 not real collection data",
   "sample_items": [
     {
-      "discogsId": 1635824261,
+      "discogsId": 1000000001,
       "release": {
-        "discogsId": 22677563,
-        "title": "Ronda Sentimental",
-        "siteUrl": "/release/22677563-Domingo-Federico-Y-Su-Orquesta-T\u00edpica-Canta-Armando-Moreno-Ronda-Sentimental",
+        "discogsId": 1001,
+        "title": "Example Title A",
+        "siteUrl": "/release/1001-Example-Artist-Example-Title-A",
         "primaryArtists": [
           {
             "nameVariation": null,
-            "displayName": "Domingo Federico Y Su Orquesta T\u00edpica",
-            "joiningText": "Canta:",
+            "displayName": "Example Artist",
+            "joiningText": null,
             "artist": {
-              "discogsId": 1296697,
-              "siteUrl": "/artist/1296697-Domingo-Federico-Y-Su-Orquesta-T\u00edpica",
-              "name": "Domingo Federico Y Su Orquesta T\u00edpica",
-              "__typename": "Artist"
-            },
-            "__typename": "PrimaryArtist"
-          },
-          {
-            "nameVariation": null,
-            "displayName": "Armando Moreno",
-            "joiningText": "",
-            "artist": {
-              "discogsId": 3498466,
-              "siteUrl": "/artist/3498466-Armando-Moreno",
-              "name": "Armando Moreno",
-              "__typename": "Artist"
-            },
-            "__typename": "PrimaryArtist"
+              "discogsId": 9001,
+              "siteUrl": "/artist/9001-Example-Artist",
+              "name": "Example Artist"
+            }
           }
         ],
         "formats": [
           {
             "name": "Vinyl",
-            "description": [
+            "qty": "1",
+            "descriptions": [
               "LP",
-              "Compilation"
-            ],
-            "text": null,
-            "quantity": "1",
-            "__typename": "Format"
-          }
-        ],
-        "inWantlist": null,
-        "country": "Colombia",
-        "released": "1984",
-        "images": {
-          "edges": [
-            {
-              "node": {
-                "id": "SW1hZ2U6NzU3NTQ5ODg=",
-                "thumbnail": {
-                  "sourceUrl": "https://i.discogs.com/APv1SyJaFn9slGtESBpbn3cmKbRG0KxotSGWExlAC_I/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIyNjc3/NTYzLTE2NDg0ODg0/MjMtMjY2My5qcGVn.jpeg",
-                  "webpUrl": "https://i.discogs.com/APv1SyJaFn9slGtESBpbn3cmKbRG0KxotSGWExlAC_I/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIyNjc3/NTYzLTE2NDg0ODg0/MjMtMjY2My5qcGVn.jpeg",
-                  "width": 149,
-                  "height": 150,
-                  "__typename": "ImageInfo"
-                },
-                "nsfw": false,
-                "__typename": "Image",
-                "tiny": {
-                  "sourceUrl": "https://i.discogs.com/zuHokxXajVt7M1dejudu_-xwJ45bwTcg3nkuEIMxFfk/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIyNjc3/NTYzLTE2NDg0ODg0/MjMtMjY2My5qcGVn.jpeg",
-                  "webpUrl": "https://i.discogs.com/zuHokxXajVt7M1dejudu_-xwJ45bwTcg3nkuEIMxFfk/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIyNjc3/NTYzLTE2NDg0ODg0/MjMtMjY2My5qcGVn.jpeg",
-                  "width": 149,
-                  "height": 150,
-                  "__typename": "ImageInfo"
-                }
-              },
-              "__typename": "ImagesEdge"
-            }
-          ],
-          "__typename": "ImagesConnection"
-        },
-        "__typename": "Release",
-        "rating": null,
-        "copiesForSale": 7,
-        "lowestPrice": {
-          "converted": {
-            "amount": 42.14002528401517,
-            "currency": "EUR",
-            "__typename": "Price"
-          },
-          "__typename": "Price"
-        },
-        "dataQuality": "NEW_SUBMISSION",
-        "salesStats": {
-          "maxValue": {
-            "converted": {
-              "amount": 21.50001290000774,
-              "currency": "EUR",
-              "__typename": "Price"
-            },
-            "__typename": "Price"
-          },
-          "medianValue": {
-            "converted": {
-              "amount": 21.50001290000774,
-              "currency": "EUR",
-              "__typename": "Price"
-            },
-            "__typename": "Price"
-          },
-          "minValue": {
-            "converted": {
-              "amount": 21.50001290000774,
-              "currency": "EUR",
-              "__typename": "Price"
-            },
-            "__typename": "Price"
-          },
-          "__typename": "ReleaseSalesStats"
-        },
-        "masterRelease": null,
-        "labels": [
-          {
-            "catalogNumber": "05(0131)02011",
-            "labelRole": "LABEL",
-            "label": {
-              "discogsId": 11358,
-              "siteUrl": "/label/11358-RCA-Victor",
-              "name": "RCA Victor",
-              "__typename": "Label"
-            },
-            "__typename": "LabelRelationship"
-          },
-          {
-            "catalogNumber": "none",
-            "labelRole": "LABEL",
-            "label": {
-              "discogsId": 36848,
-              "siteUrl": "/label/36848-Sonolux",
-              "name": "Sonolux",
-              "__typename": "Label"
-            },
-            "__typename": "LabelRelationship"
-          },
-          {
-            "catalogNumber": null,
-            "labelRole": "MANUFACTURED_BY",
-            "label": {
-              "discogsId": 252971,
-              "siteUrl": "/label/252971-Industria-Electro-Sonora-SA",
-              "name": "Industria Electro Sonora S.A.",
-              "__typename": "Label"
-            },
-            "__typename": "LabelRelationship"
-          },
-          {
-            "catalogNumber": null,
-            "labelRole": "SERIES",
-            "label": {
-              "discogsId": 497622,
-              "siteUrl": "/label/497622-Coleccionista",
-              "name": "Coleccionista",
-              "__typename": "Label"
-            },
-            "__typename": "LabelRelationship"
+              "Album"
+            ]
           }
         ]
-      },
-      "__typename": "CollectionItem",
-      "folder": {
-        "discogsId": 6502054,
-        "name": "tango backup",
-        "__typename": "CollectionFolder"
-      },
-      "notes": [
-        {
-          "discogsId": 1177569695,
-          "noteType": {
-            "discogsId": 1,
-            "name": "Media Condition",
-            "displayOrder": 1,
-            "options": [
-              "Mint (M)",
-              "Near Mint (NM or M-)",
-              "Very Good Plus (VG+)",
-              "Very Good (VG)",
-              "Good Plus (G+)",
-              "Good (G)",
-              "Fair (F)",
-              "Poor (P)"
-            ],
-            "fieldType": "DROPDOWN",
-            "isPublic": false,
-            "__typename": "CollectionNoteType"
-          },
-          "text": {
-            "html": "Very Good Plus (VG+)",
-            "markup": "Very Good Plus (VG+)",
-            "__typename": "DiscogsMarkup"
-          },
-          "__typename": "CollectionNote"
-        },
-        {
-          "discogsId": 1177569725,
-          "noteType": {
-            "discogsId": 2,
-            "name": "Sleeve Condition",
-            "displayOrder": 2,
-            "options": [
-              "Generic",
-              "No Cover",
-              "Mint (M)",
-              "Near Mint (NM or M-)",
-              "Very Good Plus (VG+)",
-              "Very Good (VG)",
-              "Good Plus (G+)",
-              "Good (G)",
-              "Fair (F)",
-              "Poor (P)"
-            ],
-            "fieldType": "DROPDOWN",
-            "isPublic": false,
-            "__typename": "CollectionNoteType"
-          },
-          "text": {
-            "html": "Near Mint (NM or M-)",
-            "markup": "Near Mint (NM or M-)",
-            "__typename": "DiscogsMarkup"
-          },
-          "__typename": "CollectionNote"
-        }
-      ],
-      "addedAt": "2024-03-26T15:01:55-07:00"
+      }
     },
     {
-      "discogsId": 1635806141,
+      "discogsId": 1000000002,
       "release": {
-        "discogsId": 28791811,
-        "title": "Los Exitos Inmortales Del Tango Y Sus Interpretes",
-        "siteUrl": "/release/28791811-Various-Los-Exitos-Inmortales-Del-Tango-Y-Sus-Interpretes",
+        "discogsId": 1002,
+        "title": "Example Title B",
+        "siteUrl": "/release/1002-Example-Artist-Example-Title-B",
         "primaryArtists": [
           {
             "nameVariation": null,
-            "displayName": "Various",
-            "joiningText": "",
+            "displayName": "Example Artist",
+            "joiningText": null,
             "artist": {
-              "discogsId": 194,
-              "siteUrl": "/artist/194-Various",
-              "name": "Various",
-              "__typename": "Artist"
-            },
-            "__typename": "PrimaryArtist"
+              "discogsId": 9001,
+              "siteUrl": "/artist/9001-Example-Artist",
+              "name": "Example Artist"
+            }
           }
         ],
         "formats": [
           {
             "name": "Vinyl",
-            "description": [
-              "LP",
-              "Compilation"
-            ],
-            "text": null,
-            "quantity": "2",
-            "__typename": "Format"
-          }
-        ],
-        "inWantlist": null,
-        "country": "Argentina",
-        "released": null,
-        "images": {
-          "edges": [
-            {
-              "node": {
-                "id": "SW1hZ2U6MTA1Njc5ODY0",
-                "thumbnail": {
-                  "sourceUrl": "https://i.discogs.com/jM-LS5Baq17xWfftfo5lVd35HgJSlZgXSqPxW2_1rZE/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4Nzkx/ODExLTE3MDU0NzU0/NDAtOTIyMi5qcGVn.jpeg",
-                  "webpUrl": "https://i.discogs.com/jM-LS5Baq17xWfftfo5lVd35HgJSlZgXSqPxW2_1rZE/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4Nzkx/ODExLTE3MDU0NzU0/NDAtOTIyMi5qcGVn.jpeg",
-                  "width": 150,
-                  "height": 149,
-                  "__typename": "ImageInfo"
-                },
-                "nsfw": false,
-                "__typename": "Image",
-                "tiny": {
-                  "sourceUrl": "https://i.discogs.com/huqxiJFaYEoXZmua_5nCjXYLsdIXuCzPEXT3PrHdMUQ/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4Nzkx/ODExLTE3MDU0NzU0/NDAtOTIyMi5qcGVn.jpeg",
-                  "webpUrl": "https://i.discogs.com/huqxiJFaYEoXZmua_5nCjXYLsdIXuCzPEXT3PrHdMUQ/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI4Nzkx/ODExLTE3MDU0NzU0/NDAtOTIyMi5qcGVn.jpeg",
-                  "width": 150,
-                  "height": 149,
-                  "__typename": "ImageInfo"
-                }
-              },
-              "__typename": "ImagesEdge"
-            }
-          ],
-          "__typename": "ImagesConnection"
-        },
-        "__typename": "Release",
-        "rating": null,
-        "copiesForSale": 4,
-        "lowestPrice": {
-          "converted": {
-            "amount": 24.08001444800867,
-            "currency": "EUR",
-            "__typename": "Price"
-          },
-          "__typename": "Price"
-        },
-        "dataQuality": "NEW_SUBMISSION",
-        "salesStats": null,
-        "masterRelease": null,
-        "labels": [
-          {
-            "catalogNumber": "CAS 6034",
-            "labelRole": "LABEL",
-            "label": {
-              "discogsId": 34044,
-              "siteUrl": "/label/34044-RCA-Camden",
-              "name": "RCA Camden",
-              "__typename": "Label"
-            },
-            "__typename": "LabelRelationship"
+            "qty": "1",
+            "descriptions": [
+              "7\"",
+              "Single"
+            ]
           }
         ]
-      },
-      "__typename": "CollectionItem",
-      "folder": {
-        "discogsId": 5574083,
-        "name": "tango",
-        "__typename": "CollectionFolder"
-      },
-      "notes": [
-        {
-          "discogsId": 1177557581,
-          "noteType": {
-            "discogsId": 1,
-            "name": "Media Condition",
-            "displayOrder": 1,
-            "options": [
-              "Mint (M)",
-              "Near Mint (NM or M-)",
-              "Very Good Plus (VG+)",
-              "Very Good (VG)",
-              "Good Plus (G+)",
-              "Good (G)",
-              "Fair (F)",
-              "Poor (P)"
-            ],
-            "fieldType": "DROPDOWN",
-            "isPublic": false,
-            "__typename": "CollectionNoteType"
-          },
-          "text": {
-            "html": "Near Mint (NM or M-)",
-            "markup": "Near Mint (NM or M-)",
-            "__typename": "DiscogsMarkup"
-          },
-          "__typename": "CollectionNote"
-        },
-        {
-          "discogsId": 1177557551,
-          "noteType": {
-            "discogsId": 2,
-            "name": "Sleeve Condition",
-            "displayOrder": 2,
-            "options": [
-              "Generic",
-              "No Cover",
-              "Mint (M)",
-              "Near Mint (NM or M-)",
-              "Very Good Plus (VG+)",
-              "Very Good (VG)",
-              "Good Plus (G+)",
-              "Good (G)",
-              "Fair (F)",
-              "Poor (P)"
-            ],
-            "fieldType": "DROPDOWN",
-            "isPublic": false,
-            "__typename": "CollectionNoteType"
-          },
-          "text": {
-            "html": "Very Good Plus (VG+)",
-            "markup": "Very Good Plus (VG+)",
-            "__typename": "DiscogsMarkup"
-          },
-          "__typename": "CollectionNote"
-        }
-      ],
-      "addedAt": "2024-03-26T14:39:31-07:00"
+      }
     }
   ]
 }

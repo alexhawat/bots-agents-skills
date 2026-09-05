@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // Read Discogs cookies from THIS agent's Chrome (DISPLAY → CDP port) via
 // official sand-host cdp-cookies. Write auth.env. Never print values.
-import { writeFileSync, chmodSync, copyFileSync, mkdirSync } from "node:fs";
+// Never copy the jar into the workspace checkout — only a path pointer.
+import { writeFileSync, chmodSync, mkdirSync } from "node:fs";
 import { connectBrowser, readCookies } from "/home/box/sand-host/box-scripts/cdp-cookies.mjs";
 import { SAND_BOX_CDP_PORT_BASE } from "/home/box/sand-host/box-scripts/box-contract.generated.mjs";
 
 const OUT = "/home/box/discogs-auth/auth.env";
-const WORK = "/workspace/discogs-scripts/_auth/auth.env";
+const WORK_DIR = "/workspace/discogs-scripts/_auth";
 const UA =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
 
@@ -50,9 +51,9 @@ const parts = names.map((n) => `${n}=${byName.get(n).value}`);
 const text = `COOKIE=${parts.join("; ")}\nUSER_AGENT=${UA}\n`;
 writeFileSync(OUT, text, { mode: 0o600 });
 chmodSync(OUT, 0o600);
-mkdirSync("/workspace/discogs-scripts/_auth", { recursive: true });
-copyFileSync(OUT, WORK);
-chmodSync(WORK, 0o600);
+// Pointer only — never duplicate the secret into the checkout.
+mkdirSync(WORK_DIR, { recursive: true });
+writeFileSync(`${WORK_DIR}/AUTH_PATH.txt`, `${OUT}\n`, { mode: 0o644 });
 console.log(
   `ok source=cdp:${port} cookies=${names.length} names=${JSON.stringify(names.sort())} path=${OUT}`
 );
