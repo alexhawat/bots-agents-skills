@@ -14,15 +14,15 @@ Capture source: `../collection-search/capture/` (see `capture/SOURCE.md`). Share
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` via `_lib/auth.py` (never print Cookie).
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) via `_lib/auth.py` (never print Cookie).
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-export/scripts/export.py --limit 100
-python3 collection-export/scripts/export.py --folder-id 0 --search ""
-python3 collection-export/scripts/export.py --search "Federico" --limit 50
+cd discogs-scripts
+uv run python collection-export/scripts/export.py --limit 100
+uv run python collection-export/scripts/export.py --folder-id 0 --search ""
+uv run python collection-export/scripts/export.py --search "Federico" --limit 50
 ```
 
 Outputs under `collection-export/out/`: `collection-YYYYMMDD-HHMMSS.csv` + `.json`.

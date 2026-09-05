@@ -13,6 +13,6 @@ Wave 1 — live 2026-09-05.
 
 ## CLI
 ```bash
-cd /workspace/discogs-scripts
-python3 price-suggest/scripts/suggest.py 7146198
+cd discogs-scripts
+uv run python price-suggest/scripts/suggest.py 7146198
 ```

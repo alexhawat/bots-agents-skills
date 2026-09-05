@@ -28,20 +28,20 @@ User drops sleeve photo
 Or with local OCR:
 
 ```bash
-python3 vinyl-photo-identify/scripts/identify.py ./sleeve.jpg --check-collection
-python3 vinyl-photo-identify/scripts/identify.py ./sleeve.jpg --query 'extra hint text'
+uv run python vinyl-photo-identify/scripts/identify.py ./sleeve.jpg --check-collection
+uv run python vinyl-photo-identify/scripts/identify.py ./sleeve.jpg --query 'extra hint text'
 ```
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` via `_lib/auth.py` for session autocomplete + collection. Public search uses User-Agent `DiscogsScripts/1.0` only. Never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) via `_lib/auth.py` for session autocomplete + collection. Public search uses User-Agent `DiscogsScripts/1.0` only. Never print Cookie.
 
 ## CLI examples
 
 ```bash
-cd /workspace/discogs-scripts
-python3 vinyl-photo-identify/scripts/identify.py --query 'Lucio Demare DMO-55454'
-python3 vinyl-photo-identify/scripts/identify.py --query 'Lucio Demare DMO-55454' --check-collection
+cd discogs-scripts
+uv run python vinyl-photo-identify/scripts/identify.py --query 'Lucio Demare DMO-55454'
+uv run python vinyl-photo-identify/scripts/identify.py --query 'Lucio Demare DMO-55454' --check-collection
 ```
 
 Expect release **18197845** among top candidates for the Demare / DMO-55454 query.

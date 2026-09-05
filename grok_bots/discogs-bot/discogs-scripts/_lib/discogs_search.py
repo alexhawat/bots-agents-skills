@@ -7,10 +7,11 @@ from __future__ import annotations
 
 import re
 import urllib.parse
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Iterable
+from typing import Any
 
-from _lib.http import DEFAULT_UA, get_json, get_public_json, graphql_get
+from _lib.http import get_json, get_public_json, graphql_get
 
 AUTOCOMPLETE_URL = (
     "https://www.discogs.com/service/search-component/public/api/autocomplete"

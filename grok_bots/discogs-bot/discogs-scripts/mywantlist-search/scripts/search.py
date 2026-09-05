@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import cli_main  # noqa: E402
 from _lib.http import get_text  # noqa: E402
 
 ROW_RE = re.compile(
@@ -34,7 +35,7 @@ def parse_rows(page_html: str) -> list[dict]:
         )
         if not title_m:
             title_m = re.search(
-                r'href="(/release/%s[^"]*)"[^>]*>([^<]+)</a>' % rid, body
+                rf'href="(/release/{rid}[^"]*)"[^>]*>([^<]+)</a>', body
             )
         title = htmlmod.unescape(title_m.group(2).strip()) if title_m else ""
         href = title_m.group(1) if title_m else f"/release/{rid}"
@@ -129,4 +130,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

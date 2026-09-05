@@ -11,14 +11,14 @@ Caps version checks with `--limit` (default 30) and sleeps lightly between calls
 
 ## Auth
 
-Required for collection checks: `/home/box/discogs-auth/auth.env` — never print Cookie.
+Required for collection checks: `$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 compare-pressings/scripts/compare.py --release-id 18197845 --limit 10
-python3 compare-pressings/scripts/compare.py --master-id 4253358 --limit 30
+cd discogs-scripts
+uv run python compare-pressings/scripts/compare.py --release-id 18197845 --limit 10
+uv run python compare-pressings/scripts/compare.py --master-id 4253358 --limit 30
 ```
 
 Table: release id, country, format, catno, year, in_collection yes/no.

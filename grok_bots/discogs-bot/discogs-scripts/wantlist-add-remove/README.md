@@ -15,16 +15,16 @@ Capture: `capture/wave4.har` + `capture/curls.txt`. See `capture/SOURCE.md`.
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie. Uses `_lib/auth.py` + `_lib/graphql_mutate.py`.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie. Uses `_lib/auth.py` + `_lib/graphql_mutate.py`.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
+cd discogs-scripts
 # dry-run (exit 2)
-python3 wantlist-add-remove/scripts/wantlist.py add --release-id 2825456
-python3 wantlist-add-remove/scripts/wantlist.py remove --release-id 2825456
+uv run python wantlist-add-remove/scripts/wantlist.py add --release-id 2825456
+uv run python wantlist-add-remove/scripts/wantlist.py remove --release-id 2825456
 # live mutate
-python3 wantlist-add-remove/scripts/wantlist.py add --release-id 2825456 --confirm
-python3 wantlist-add-remove/scripts/wantlist.py remove --release-id 2825456 --confirm
+uv run python wantlist-add-remove/scripts/wantlist.py add --release-id 2825456 --confirm
+uv run python wantlist-add-remove/scripts/wantlist.py remove --release-id 2825456 --confirm
 ```

@@ -7,6 +7,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
+from _lib.errors import ConfirmationRequired, DiscogsHTTPError
 from _lib.http import DEFAULT_UA
 
 GRAPHQL_URL = "https://www.discogs.com/service/catalog/api/graphql"
@@ -67,15 +68,13 @@ def graphql_mutate(
     except urllib.error.HTTPError as e:
         err_body = e.read()[:800]
         # Never include request Cookie in error text
-        raise SystemExit(
-            f"HTTP {e.code} for GraphQL {operation_name}: {err_body!r}"
-        ) from e
+        raise DiscogsHTTPError(e.code, f"GraphQL {operation_name}", err_body) from e
 
 
 def require_confirm(confirm: bool, planned: str) -> None:
-    """If not confirm, print planned mutation and exit 2."""
+    """If not confirm, print the planned mutation and abort with exit code 2."""
     if confirm:
         return
     print(planned)
     print("# dry-run: pass --confirm to execute (exit 2)")
-    raise SystemExit(2)
+    raise ConfirmationRequired("")

@@ -10,12 +10,12 @@ Wave 3 — list collection folders and item counts (read-only).
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-folders/scripts/list_folders.py
-python3 collection-folders/scripts/list_folders.py --json
+cd discogs-scripts
+uv run python collection-folders/scripts/list_folders.py
+uv run python collection-folders/scripts/list_folders.py --json
 ```

@@ -9,10 +9,10 @@ Wave 1 — live 2026-09-05.
    Same `tr.shortcut_navigable` row pattern as marketplace-search.
 
 ## Auth
-`/home/box/discogs-auth/auth.env`
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`)
 
 ## CLI
 ```bash
-cd /workspace/discogs-scripts
-python3 release-listings/scripts/listings.py 7146198
+cd discogs-scripts
+uv run python release-listings/scripts/listings.py 7146198
 ```

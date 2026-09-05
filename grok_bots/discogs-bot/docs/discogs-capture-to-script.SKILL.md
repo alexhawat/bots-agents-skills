@@ -46,8 +46,8 @@ Loader: `/workspace/discogs-scripts/_lib/auth.py` merges auth.env → personal.e
 ## Backlog
 
 Source of truth: `/workspace/discogs-scripts/AUTOMATION-BACKLOG.md`.  
-Persona live list: Discogs-Bot `// version 4.1` (auth docs; eggbot bumps) at `/home/box/agent-data/agents/903704f2-0759-4c98-9d58-6318f0a731fa/profile.json`.  
-Exportable surface: `/workspace/discogs-scripts/EXPORT.md`.
+Persona live list: Discogs-Bot `// version 4.1` (kept in the bot's own profile).  
+Exportable surface: `docs/EXPORT.md`.
 
 **Live** (on disk under `/workspace/discogs-scripts/<slug>/scripts/`, shared Cookie — inventory 2026-09-05, matches persona v4.1):
 
@@ -94,7 +94,8 @@ Shared libs: `_lib/` (`auth.py`, `http.py`, `mp_html.py`, `collection_fetch.py`,
 3. Capture once (HAR / copy-as-cURL); drop noise.
 4. Script loads `/home/box/discogs-auth/auth.env` (+ `personal.env`); redacted stdout.
 5. Verify once; reuse until 401/403 → re-login path + refresh jar.
-6. After shipping new slugs: update this **Live** table and bump Discogs-Bot persona the same turn (minor).
+6. After shipping new slugs: update this **Live** table, add tests for any new pure
+   parser, and bump the Discogs-Bot persona the same turn (minor).
 
 ## Output
 

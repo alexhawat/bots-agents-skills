@@ -118,7 +118,9 @@ def parse_marketplace_rows(html: str) -> list[dict[str, Any]]:
 
         rows.append(
             {
-                "release_id": int(release_id) if release_id and release_id.isdigit() else release_id,
+                "release_id": (
+                    int(release_id) if release_id and release_id.isdigit() else release_id
+                ),
                 "item_id": int(item_id) if item_id else None,
                 "item_url": f"https://www.discogs.com{item_path}" if item_path else None,
                 "title": title,

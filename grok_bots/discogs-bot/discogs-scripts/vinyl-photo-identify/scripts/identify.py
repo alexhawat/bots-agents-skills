@@ -33,6 +33,7 @@ from _lib.discogs_search import (  # noqa: E402
     public_search,
     rank_hits,
 )
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 
@@ -87,7 +88,7 @@ def gather_text(images: list[Path], query: str | None) -> tuple[str, list[str]]:
         )
     for img in images:
         if not img.is_file():
-            raise SystemExit(f"Image not found: {img}")
+            raise DiscogsError(f"Image not found: {img}")
         if has_tesseract:
             text = ocr_image(img)
             if text:
@@ -183,7 +184,7 @@ def main() -> None:
     else:
         try:
             auth = load_auth(task_root=TASK)
-        except SystemExit:
+        except DiscogsError:
             auth = None
 
     hits = search_from_text(combined, auth, currency=args.currency)
@@ -204,4 +205,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

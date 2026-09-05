@@ -9,11 +9,11 @@ Sorts `price` ascending, paginates, keeps rows where `price.buyerItemPrice` ≤ 
 Capture surface: wantlist-for-sale feed. Do not send `fast`/`wants`.
 
 ## Auth
-`/home/box/discogs-auth/auth.env`
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`)
 
 ## CLI
 ```bash
-cd /workspace/discogs-scripts
-python3 wantlist-vs-marketplace/scripts/compare.py --max-price 10 --format-name Vinyl
-python3 wantlist-vs-marketplace/scripts/compare.py --max-price 25 --currency EUR --limit 20
+cd discogs-scripts
+uv run python wantlist-vs-marketplace/scripts/compare.py --max-price 10 --format-name Vinyl
+uv run python wantlist-vs-marketplace/scripts/compare.py --max-price 25 --currency EUR --limit 20
 ```

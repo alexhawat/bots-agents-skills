@@ -8,15 +8,15 @@ Same GraphQL as collection-search (`ViewerCollectionListData`). Filters run loca
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-by-label-year-format/scripts/filter.py --format Vinyl --year 1980
-python3 collection-by-label-year-format/scripts/filter.py --label RCA --year-min 1970 --year-max 1979
-python3 collection-by-label-year-format/scripts/filter.py --format Vinyl --limit 200
+cd discogs-scripts
+uv run python collection-by-label-year-format/scripts/filter.py --format Vinyl --year 1980
+uv run python collection-by-label-year-format/scripts/filter.py --label RCA --year-min 1970 --year-max 1979
+uv run python collection-by-label-year-format/scripts/filter.py --format Vinyl --limit 200
 ```
 
 - `--label SUBSTR` — case-insensitive match on primary label name

@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 from _lib.auth import load_auth  # noqa: E402
 from _lib.collection_fetch import iter_collection_items  # noqa: E402
 from _lib.discogs_search import PUBLIC_UA  # noqa: E402
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 from _lib.http import get_public_json  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -46,7 +47,7 @@ def series_from_release(rel: dict) -> list[dict]:
 
 def pick_series(entries: list[dict], name: str | None) -> dict:
     if not entries:
-        raise SystemExit("release has no series[] — pass --series NAME instead")
+        raise DiscogsError("release has no series[] — pass --series NAME instead")
     if name:
         needle = name.lower()
         for s in entries:
@@ -56,7 +57,7 @@ def pick_series(entries: list[dict], name: str | None) -> dict:
             if needle in (s.get("name") or "").lower():
                 return s
         names = [s.get("name") for s in entries]
-        raise SystemExit(f"series {name!r} not on release; available={names}")
+        raise DiscogsError(f"series {name!r} not on release; available={names}")
     if len(entries) == 1:
         return entries[0]
     names = [s.get("name") for s in entries]
@@ -195,7 +196,7 @@ def resolve_series_members(
             if members:
                 return members
             print("# resource_url returned 0 releases; falling back to search", file=sys.stderr)
-        except SystemExit as e:
+        except DiscogsError as e:
             print(f"# resource_url fetch failed: {e}; falling back to search", file=sys.stderr)
 
     return search_series_releases(series_name, user_agent, limit)
@@ -250,7 +251,7 @@ def main() -> int:
         series_meta = pick_series(entries, None)
         series_name = series_meta.get("name") or ""
         if not series_name:
-            raise SystemExit("series entry missing name")
+            raise DiscogsError("series entry missing name")
     else:
         series_name = args.series
         # Try to find a series resource via a release search hit that lists series
@@ -266,19 +267,19 @@ def main() -> int:
                     continue
                 try:
                     full = get_release(int(hid), user_agent)
-                except SystemExit:
+                except DiscogsError:
                     continue
+                wanted = series_name.lower()
                 for s in series_from_release(full):
-                    if (s.get("name") or "").lower() == series_name.lower() or series_name.lower() in (
-                        s.get("name") or ""
-                    ).lower():
+                    got = (s.get("name") or "").lower()
+                    if got == wanted or wanted in got:
                         series_meta = s
                         series_name = s.get("name") or series_name
                         break
                 if series_meta:
                     break
                 time.sleep(0.2)
-        except SystemExit as e:
+        except DiscogsError as e:
             print(f"# series probe search skipped: {e}", file=sys.stderr)
 
     members = resolve_series_members(
@@ -340,4 +341,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    cli_main(main)

@@ -13,7 +13,7 @@ Unlike Wave 1 `wantlist-search` (marketplace wantlist-for-sale / `sell_item`), t
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 mywantlist-search/scripts/search.py 'Domingo Federico'
-python3 mywantlist-search/scripts/search.py 'Domingo Federico' --artist-match Federico
+cd discogs-scripts
+uv run python mywantlist-search/scripts/search.py 'Domingo Federico'
+uv run python mywantlist-search/scripts/search.py 'Domingo Federico' --artist-match Federico
 ```

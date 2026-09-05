@@ -19,19 +19,19 @@ POST `https://www.discogs.com/service/catalog/api/graphql`
 | 2 | Sleeve |
 | 3 | Free text / custom — **capture used type 3** with `noteText: "wave4-temp"` |
 
-Capture: `capture/wave4.har`. See `capture/SOURCE.md`.
+Capture: `../../wantlist-add-remove/capture/wave4.har`. See `capture/SOURCE.md`.
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-notes/scripts/notes.py set --item-id N --note-type-id 3 --text 'hello'
-python3 collection-notes/scripts/notes.py clear --note-id N
+cd discogs-scripts
+uv run python collection-notes/scripts/notes.py set --item-id N --note-type-id 3 --text 'hello'
+uv run python collection-notes/scripts/notes.py clear --note-id N
 # live
-python3 collection-notes/scripts/notes.py set --item-id N --note-type-id 3 --text 'hello' --confirm
-python3 collection-notes/scripts/notes.py clear --note-id N --confirm
+uv run python collection-notes/scripts/notes.py set --item-id N --note-type-id 3 --text 'hello' --confirm
+uv run python collection-notes/scripts/notes.py clear --note-id N --confirm
 ```

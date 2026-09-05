@@ -1,0 +1,6 @@
+# Runtime: the automation scripts are standard-library only (Python 3.9+).
+# This file exists for `pip install -r requirements.txt` parity with pyproject.toml.
+#
+# Optional: enables the Chrome SQLite cookie-decrypt fallback in
+# discogs-auth/export_cookies.py. The preferred CDP and seed paths do not need it.
+cryptography>=42.0 ; python_version >= "3.9"

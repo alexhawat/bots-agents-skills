@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+uv.lock
+
+# Secrets — never commit (see grok_bots/discogs-bot/README.md)
+auth.env
+personal.env
+**/auth.env
+**/personal.env
+chrome-cookie-seed.json
+**/cookies.txt
+**/*.pem
+**/secrets/
+
+# HARs are denied by default — a raw capture carries the session Cookie.
+# Redacted fixtures are allowlisted in grok_bots/discogs-bot/discogs-scripts/.gitignore.
+*.har
+
+# Script output
+out/

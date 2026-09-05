@@ -12,7 +12,7 @@ Shared jar: `/home/box/discogs-auth/auth.env` (task `auth.env` overrides if pres
 
 ## CLI
 ```bash
-cd /workspace/discogs-scripts
-python3 marketplace-search/scripts/search.py Pugliese --format Vinyl --currency EUR
-python3 marketplace-search/scripts/search.py Pugliese --format Vinyl --page 2
+cd discogs-scripts
+uv run python marketplace-search/scripts/search.py Pugliese --format Vinyl --currency EUR
+uv run python marketplace-search/scripts/search.py Pugliese --format Vinyl --page 2
 ```

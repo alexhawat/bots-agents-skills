@@ -13,18 +13,18 @@ No GraphQL for orders — parse HTML. Capture: `capture/curls.txt`, `capture/SOU
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` via `_lib/auth.py` + `_lib/http.get_text`. Never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) via `_lib/auth.py` + `_lib/http.get_text`. Never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 orders-list/scripts/orders.py list
-python3 orders-list/scripts/orders.py list --page 1 --json
-python3 orders-list/scripts/orders.py status --order-id 1106613-4781
-python3 orders-list/scripts/orders.py status --order-id 1106613-4781 --json
+cd discogs-scripts
+uv run python orders-list/scripts/orders.py list
+uv run python orders-list/scripts/orders.py list --page 1 --json
+uv run python orders-list/scripts/orders.py status --order-id 1106613-4781
+uv run python orders-list/scripts/orders.py status --order-id 1106613-4781 --json
 # alias:
-python3 orders-list/scripts/orders.py order-status --order-id 1106613-4781
+uv run python orders-list/scripts/orders.py order-status --order-id 1106613-4781
 ```
 
 `list` prints a table: order id, date, seller, total, status.  

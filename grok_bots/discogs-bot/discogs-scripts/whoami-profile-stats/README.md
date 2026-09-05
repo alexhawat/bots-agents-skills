@@ -21,9 +21,9 @@ If `ViewerCollectionPageData` fails (hash drift), the script skips value stats a
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 whoami-profile-stats/scripts/whoami.py
-python3 whoami-profile-stats/scripts/whoami.py --json
-python3 whoami-profile-stats/scripts/whoami.py --username "$USERNAME" --json
-python3 whoami-profile-stats/scripts/whoami.py --skip-value
+cd discogs-scripts
+uv run python whoami-profile-stats/scripts/whoami.py
+uv run python whoami-profile-stats/scripts/whoami.py --json
+uv run python whoami-profile-stats/scripts/whoami.py --username "$USERNAME" --json
+uv run python whoami-profile-stats/scripts/whoami.py --skip-value
 ```

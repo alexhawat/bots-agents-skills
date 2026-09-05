@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
 from _lib.discogs_search import PUBLIC_UA  # noqa: E402
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 from _lib.http import get_public_json, graphql_get  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -49,10 +50,10 @@ def resolve_master_id(release_id: int, auth: dict | None) -> tuple[int, dict]:
             mr = ((gql.get("data") or {}).get("release") or {}).get("masterRelease")
             if mr and mr.get("discogsId"):
                 return int(mr["discogsId"]), public
-        except SystemExit as e:
+        except DiscogsError as e:
             print(f"# DeferredReleaseData skipped: {e}", file=sys.stderr)
 
-    raise SystemExit(
+    raise DiscogsError(
         f"Release {release_id} has no master_id (standalone release / not linked)"
     )
 
@@ -98,7 +99,7 @@ def main() -> None:
     auth = None
     try:
         auth = load_auth(task_root=TASK)
-    except SystemExit:
+    except DiscogsError:
         auth = None
 
     highlight_id: int | None = None
@@ -144,4 +145,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

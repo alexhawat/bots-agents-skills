@@ -21,6 +21,7 @@ from _lib.discogs_search import (  # noqa: E402
     looks_like_barcode,
     lookup_query,
 )
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 
@@ -86,7 +87,7 @@ def main() -> None:
         # Autocomplete works without Cookie; still load if jar present for richer session
         try:
             auth = load_auth(task_root=TASK)
-        except SystemExit:
+        except DiscogsError:
             auth = None
 
     hits = lookup_query(
@@ -119,4 +120,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

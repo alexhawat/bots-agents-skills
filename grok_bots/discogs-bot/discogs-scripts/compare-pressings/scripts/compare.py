@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
 from _lib.discogs_search import PUBLIC_UA, check_in_collection  # noqa: E402
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 from _lib.http import get_public_json  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -32,7 +33,7 @@ def resolve_master_id(release_id: int) -> int:
     )
     mid = public.get("master_id")
     if not mid:
-        raise SystemExit(f"Release {release_id} has no master_id")
+        raise DiscogsError(f"Release {release_id} has no master_id")
     return int(mid)
 
 
@@ -124,7 +125,7 @@ def main() -> None:
                 copies = coll.get("copies")
                 if isinstance(copies, int) and copies > 1:
                     in_coll = f"yes×{copies}"
-        except SystemExit as e:
+        except DiscogsError as e:
             in_coll = "err"
             print(f"# check failed for {vid}: {e}", file=sys.stderr)
 
@@ -143,4 +144,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

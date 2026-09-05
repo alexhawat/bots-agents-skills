@@ -6,8 +6,10 @@ Never logs Cookie values.
 from __future__ import annotations
 
 import sys
-from typing import Any, Iterator
+from collections.abc import Iterator
+from typing import Any
 
+from _lib.errors import DiscogsAPIError, DiscogsAuthError
 from _lib.http import graphql_get
 
 ENDPOINT = "https://www.discogs.com/service/catalog/api/graphql"
@@ -147,15 +149,17 @@ def fetch_page(
         sha256_hash=SHA256,
         variables=variables,
     )
-    viewer = (data.get("data") or {}).get("viewer")
-    if viewer is None:
-        raise SystemExit(
-            "viewer=null — session dead or COOKIE incomplete. "
-            "Refresh /home/box/discogs-auth/auth.env"
-        )
+    # Check errors BEFORE viewer: a genuine GraphQL error also nulls viewer,
+    # and reporting it as "session dead" sends you down the wrong path.
     if data.get("errors"):
         # Surface GraphQL errors without dumping auth
-        raise SystemExit(f"GraphQL errors: {data['errors']!r}")
+        raise DiscogsAPIError(f"GraphQL errors: {data['errors']!r}")
+    viewer = (data.get("data") or {}).get("viewer")
+    if viewer is None:
+        raise DiscogsAuthError(
+            "viewer=null — session dead or COOKIE incomplete. "
+            "Run auth-refresh/scripts/refresh.py --check-only"
+        )
     off = viewer.get("offsetCollectionItems") or {}
     items = off.get("collectionItems") or []
     total = off.get("totalCount")
@@ -203,7 +207,7 @@ def iter_collection_items(
             break
         page += 1
         if page > 500:
-            raise SystemExit("pagination safety stop (page>500)")
+            raise DiscogsAPIError("pagination safety stop (page>500)")
 
 
 def fetch_rows(

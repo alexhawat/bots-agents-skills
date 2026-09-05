@@ -13,10 +13,10 @@ Wave 5 — thin CLI wrapping existing search scripts (subprocess).
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 batch-runner/scripts/batch.py search collection --q kraftwerk --vinyl-only
-python3 batch-runner/scripts/batch.py search wantlist --q aphex
-python3 batch-runner/scripts/batch.py search market --q "basic channel" --format Vinyl --currency EUR
+cd discogs-scripts
+uv run python batch-runner/scripts/batch.py search collection --q kraftwerk --vinyl-only
+uv run python batch-runner/scripts/batch.py search wantlist --q aphex
+uv run python batch-runner/scripts/batch.py search market --q "basic channel" --format Vinyl --currency EUR
 ```
 
 Prints `# invoked <script-path>` then the child script’s stdout. Exit code = child exit code.

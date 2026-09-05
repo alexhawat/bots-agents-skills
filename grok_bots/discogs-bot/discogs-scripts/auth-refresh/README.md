@@ -19,10 +19,10 @@ On dead session, runs `python3 /home/box/discogs-auth/export_cookies.py` (unless
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 auth-refresh/scripts/refresh.py --check-only
-python3 auth-refresh/scripts/refresh.py
-python3 auth-refresh/scripts/refresh.py --force-export
+cd discogs-scripts
+uv run python auth-refresh/scripts/refresh.py --check-only
+uv run python auth-refresh/scripts/refresh.py
+uv run python auth-refresh/scripts/refresh.py --force-export
 ```
 
 Success: `ok viewer=<username or id>` exit 0. Failure: semi-manual path (Discogs-Bot Chrome + `request_box_help` desktop login; then re-run refresh for auto `export_cookies.py` → Cookie in `auth.env`) exit 1.

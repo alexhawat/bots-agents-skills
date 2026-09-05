@@ -1,7 +1,7 @@
 # Capture notes — wantlist-add-remove
 
 - Date: 2026-09-05
-- HAR: `wave4.har` (this directory)
+- HAR: `wave4.har` (this directory, redacted)
 - Redacted curls: `curls.txt`
 - Ops (exact hashes from HAR):
   - `AddReleasesToWantlist` sha `d07fa55f88404b5d0e5253faf962ed104ad1efd3af871c9281b76e874d4a2bf4`

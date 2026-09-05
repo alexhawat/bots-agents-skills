@@ -16,10 +16,10 @@ Self-test sample: `fixtures/sample-curls.txt`.
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 har-diff/scripts/diff.py har-diff/fixtures/sample-curls.txt
-python3 har-diff/scripts/diff.py wantlist-add-remove/capture/curls.txt
-python3 har-diff/scripts/diff.py path/to.har --fixture har-diff/fixtures/known-operations.json
+cd discogs-scripts
+uv run python har-diff/scripts/diff.py har-diff/fixtures/sample-curls.txt
+uv run python har-diff/scripts/diff.py wantlist-add-remove/capture/curls.txt
+uv run python har-diff/scripts/diff.py path/to.har --fixture har-diff/fixtures/known-operations.json
 ```
 
 Reports: matched, drifted (same name, different hash), new ops, missing expected.

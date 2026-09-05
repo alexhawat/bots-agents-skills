@@ -12,7 +12,7 @@ User-Agent for public API: `DiscogsScripts/1.0`. See `capture/SOURCE.md`.
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 master-vs-release/scripts/master_vs_release.py --release-id 18197845
-python3 master-vs-release/scripts/master_vs_release.py --master-id 4253358
+cd discogs-scripts
+uv run python master-vs-release/scripts/master_vs_release.py --release-id 18197845
+uv run python master-vs-release/scripts/master_vs_release.py --master-id 4253358
 ```

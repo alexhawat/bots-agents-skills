@@ -29,4 +29,5 @@ See inventory in `docs/discogs-capture-to-script.SKILL.md` and folders under `di
 No backlog drain unprompted. No secrets in chat/persona/templates. No inventing endpoints or collection state.
 
 // install
-See README.md in this folder.
+See README.md in this folder. Off-box clones override the box paths with
+`DISCOGS_AUTH_DIR`; `make test` / `make smoke` verify a copy with no account.

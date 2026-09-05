@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Export Discogs session Cookie → /home/box/discogs-auth/auth.env.
+"""Export Discogs session Cookie → auth.env (0600).
 
-On this box Chrome SQLite Cookies are encrypted with no os_crypt key.
-Prefer the sand plaintext seed (/home/box/agent-data/chrome-cookie-seed.json),
-then fall back to best-effort profile decrypt.
+Source order, first hit wins:
+  1. live CDP jar from this display  (export_from_display.mjs)
+  2. box cookie seed                 (chrome-cookie-seed.json)
+  3. Chrome SQLite decrypt           (best effort; usually no os_crypt key here)
 
-Never prints cookie values. Exit 0 on success, 1 on failure.
+Destination is $DISCOGS_AUTH_ENV, else $DISCOGS_AUTH_DIR/auth.env, else the
+box default. Never prints cookie values. Exit 0 on success, 1 on failure.
 """
 from __future__ import annotations
 
@@ -14,27 +16,49 @@ import json
 import os
 import shutil
 import sqlite3
-import sys
 import tempfile
 from hashlib import pbkdf2_hmac
 from pathlib import Path
 
-OUT = Path("/home/box/discogs-auth/auth.env")
-SEED = Path("/home/box/agent-data/chrome-cookie-seed.json")
+
+def _out_path() -> Path:
+    """Match _lib.auth resolution so exporter and loader never disagree."""
+    if os.environ.get("DISCOGS_AUTH_ENV"):
+        return Path(os.environ["DISCOGS_AUTH_ENV"])
+    base = os.environ.get("DISCOGS_AUTH_DIR") or "/home/box/discogs-auth"
+    return Path(base) / "auth.env"
+
+
+OUT = _out_path()
+SEED = Path(os.environ.get("DISCOGS_COOKIE_SEED") or "/home/box/agent-data/chrome-cookie-seed.json")
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
 )
-WORK = Path("/workspace/discogs-scripts/_auth")
+WORK = Path(os.environ.get("DISCOGS_WORK_AUTH") or "/workspace/discogs-scripts/_auth")
+
+
+def write_secret(path: Path, text: str) -> None:
+    """Create `path` at mode 0600 *before* writing.
+
+    write_text() would create at the umask default (0644) and leave the cookie
+    world-readable until the chmod landed.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.write(fd, text.encode("utf-8"))
+    finally:
+        os.close(fd)
+    os.chmod(path, 0o600)  # tighten if the file already existed more openly
 
 
 def _write(parts: list[str], names: list[str], source: str) -> int:
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(f"COOKIE={'; '.join(parts)}\nUSER_AGENT={UA}\n")
-    os.chmod(OUT, 0o600)
+    write_secret(OUT, f"COOKIE={'; '.join(parts)}\nUSER_AGENT={UA}\n")
+    # Write only the POINTER into the work tree — never a copy of the jar.
+    # Consumers resolve the real path via _lib.auth, so a duplicate secret
+    # inside the repo checkout would be pure risk with no reader.
     WORK.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(OUT, WORK / "auth.env")
-    os.chmod(WORK / "auth.env", 0o600)
     (WORK / "AUTH_PATH.txt").write_text(str(OUT) + "\n")
     print(f"ok source={source} cookies={len(names)} names={sorted(set(names))} path={OUT}")
     return 0
@@ -83,7 +107,8 @@ def export_from_seed() -> int | None:
 
 def profiles():
     root = Path("/home/box")
-    for p in sorted(root.glob("chrome-profile*/Default/Cookies"), key=lambda x: x.stat().st_mtime, reverse=True):
+    profiles_glob = root.glob("chrome-profile*/Default/Cookies")
+    for p in sorted(profiles_glob, key=lambda x: x.stat().st_mtime, reverse=True):
         yield p.parent.parent
 
 
@@ -121,14 +146,22 @@ def export_from(profile: Path, keys):
     db = profile / "Default" / "Cookies"
     if not db.exists():
         return None
-    tmp = tempfile.mktemp(suffix=".db")
-    shutil.copy2(db, tmp)
-    con = sqlite3.connect(tmp)
-    rows = con.execute(
-        "select name, encrypted_value, value from cookies where host_key like '%discogs%'"
-    ).fetchall()
-    con.close()
-    os.unlink(tmp)
+    # mkstemp, not mktemp: this copy holds the live cookie DB, and a
+    # predictable name is a symlink-race waiting to happen.
+    fd, tmp = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    try:
+        shutil.copy2(db, tmp)
+        con = sqlite3.connect(tmp)
+        try:
+            rows = con.execute(
+                "select name, encrypted_value, value from cookies "
+                "where host_key like '%discogs%'"
+            ).fetchall()
+        finally:
+            con.close()
+    finally:
+        os.unlink(tmp)
     for key in keys:
         parts, names = [], []
         for name, enc, val in rows:
