@@ -51,3 +51,13 @@ def isolated_auth(tmp_path, monkeypatch):
     monkeypatch.delenv("DISCOGS_AUTH_ENV", raising=False)
     monkeypatch.delenv("DISCOGS_PERSONAL_ENV", raising=False)
     return tmp_path
+
+
+def load_auth_helper(module: str):
+    """Import a discogs-auth helper by path (they are scripts, not a package)."""
+    path = PACK_ROOT / "discogs-auth" / f"{module}.py"
+    spec = importlib.util.spec_from_file_location(f"_authhelper_{module}", path)
+    assert spec and spec.loader, path
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod

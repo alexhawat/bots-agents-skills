@@ -8,15 +8,13 @@ import sys
 from pathlib import Path
 
 
-def _out_path() -> Path:
+# Resolved per call, not at import — see export_cookies.py.
+def out_path() -> Path:
     """Match _lib.auth resolution so exporter and loader never disagree."""
     if os.environ.get("DISCOGS_AUTH_ENV"):
         return Path(os.environ["DISCOGS_AUTH_ENV"])
     base = os.environ.get("DISCOGS_AUTH_DIR") or "/home/box/discogs-auth"
     return Path(base) / "auth.env"
-
-
-OUT = _out_path()
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
@@ -66,14 +64,15 @@ def main() -> int:
     names = sorted({p.split("=", 1)[0].strip() for p in cookie.split(";") if "=" in p})
     # Create at 0600 before writing: write_text() would create at the umask
     # default (0644), leaving the cookie world-readable until the chmod.
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    fd = os.open(OUT, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    out = out_path()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
     try:
         os.write(fd, f"COOKIE={cookie}\nUSER_AGENT={ua}\n".encode())
     finally:
         os.close(fd)
-    os.chmod(OUT, 0o600)
-    print(f"ok path={OUT} cookie_len={len(cookie)} names={names}")
+    os.chmod(out, 0o600)
+    print(f"ok path={out} cookie_len={len(cookie)} names={names}")
     return 0
 
 

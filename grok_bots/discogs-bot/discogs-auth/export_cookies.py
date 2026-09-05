@@ -20,22 +20,30 @@ import tempfile
 from hashlib import pbkdf2_hmac
 from pathlib import Path
 
-
-def _out_path() -> Path:
-    """Match _lib.auth resolution so exporter and loader never disagree."""
-    if os.environ.get("DISCOGS_AUTH_ENV"):
-        return Path(os.environ["DISCOGS_AUTH_ENV"])
-    base = os.environ.get("DISCOGS_AUTH_DIR") or "/home/box/discogs-auth"
-    return Path(base) / "auth.env"
-
-
-OUT = _out_path()
-SEED = Path(os.environ.get("DISCOGS_COOKIE_SEED") or "/home/box/agent-data/chrome-cookie-seed.json")
+DEFAULT_AUTH_DIR = "/home/box/discogs-auth"
+DEFAULT_SEED = "/home/box/agent-data/chrome-cookie-seed.json"
+DEFAULT_WORK = "/workspace/discogs-scripts/_auth"
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
 )
-WORK = Path(os.environ.get("DISCOGS_WORK_AUTH") or "/workspace/discogs-scripts/_auth")
+
+
+# Resolved per call, not at import: a caller that sets DISCOGS_* after importing
+# this module (tests, wrappers) must still get the path it asked for.
+def out_path() -> Path:
+    """Match _lib.auth resolution so exporter and loader never disagree."""
+    if os.environ.get("DISCOGS_AUTH_ENV"):
+        return Path(os.environ["DISCOGS_AUTH_ENV"])
+    return Path(os.environ.get("DISCOGS_AUTH_DIR") or DEFAULT_AUTH_DIR) / "auth.env"
+
+
+def seed_path() -> Path:
+    return Path(os.environ.get("DISCOGS_COOKIE_SEED") or DEFAULT_SEED)
+
+
+def work_dir() -> Path:
+    return Path(os.environ.get("DISCOGS_WORK_AUTH") or DEFAULT_WORK)
 
 
 def write_secret(path: Path, text: str) -> None:
@@ -54,13 +62,15 @@ def write_secret(path: Path, text: str) -> None:
 
 
 def _write(parts: list[str], names: list[str], source: str) -> int:
-    write_secret(OUT, f"COOKIE={'; '.join(parts)}\nUSER_AGENT={UA}\n")
+    out = out_path()
+    write_secret(out, f"COOKIE={'; '.join(parts)}\nUSER_AGENT={UA}\n")
     # Write only the POINTER into the work tree — never a copy of the jar.
     # Consumers resolve the real path via _lib.auth, so a duplicate secret
     # inside the repo checkout would be pure risk with no reader.
-    WORK.mkdir(parents=True, exist_ok=True)
-    (WORK / "AUTH_PATH.txt").write_text(str(OUT) + "\n")
-    print(f"ok source={source} cookies={len(names)} names={sorted(set(names))} path={OUT}")
+    work = work_dir()
+    work.mkdir(parents=True, exist_ok=True)
+    (work / "AUTH_PATH.txt").write_text(str(out) + "\n")
+    print(f"ok source={source} cookies={len(names)} names={sorted(set(names))} path={out}")
     return 0
 
 
@@ -68,7 +78,7 @@ def _write(parts: list[str], names: list[str], source: str) -> int:
 def export_from_this_display() -> int | None:
     """Live jar from this agent's Chrome via official sand-host CDP helper."""
     import subprocess
-    helper = Path("/home/box/discogs-auth/export_from_display.mjs")
+    helper = Path(__file__).resolve().parent / "export_from_display.mjs"
     if not helper.is_file():
         return None
     r = subprocess.run(
@@ -83,10 +93,11 @@ def export_from_this_display() -> int | None:
     return None
 
 def export_from_seed() -> int | None:
-    if not SEED.is_file():
+    seed = seed_path()
+    if not seed.is_file():
         return None
     try:
-        data = json.loads(SEED.read_text())
+        data = json.loads(seed.read_text())
     except Exception:
         return None
     rows = [c for c in (data.get("cookies") or []) if "discogs" in (c.get("domain") or "").lower()]
@@ -102,7 +113,7 @@ def export_from_seed() -> int | None:
     if "session" not in by_name and "sid" not in by_name:
         return None
     parts = [f"{n}={by_name[n]}" for n in names]
-    return _write(parts, names, f"seed:{SEED}")
+    return _write(parts, names, f"seed:{seed}")
 
 
 def profiles():
@@ -192,7 +203,7 @@ def main() -> int:
     got = export_from_seed()
     if got is not None:
         return got
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+    out_path().parent.mkdir(parents=True, exist_ok=True)
     for profile in profiles():
         keys = load_key(profile)
         if not keys:

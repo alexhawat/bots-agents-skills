@@ -3,11 +3,20 @@
 // official sand-host cdp-cookies. Write auth.env. Never print values.
 // Never copy the jar into the workspace checkout — only a path pointer.
 import { writeFileSync, chmodSync, mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 import { connectBrowser, readCookies } from "/home/box/sand-host/box-scripts/cdp-cookies.mjs";
 import { SAND_BOX_CDP_PORT_BASE } from "/home/box/sand-host/box-scripts/box-contract.generated.mjs";
 
-const OUT = "/home/box/discogs-auth/auth.env";
-const WORK_DIR = "/workspace/discogs-scripts/_auth";
+// Path resolution mirrors _lib/auth.py and export_cookies.py so the exporter
+// and the loader can never disagree about where the jar lives.
+function outPath() {
+  if (process.env.DISCOGS_AUTH_ENV) return process.env.DISCOGS_AUTH_ENV;
+  const base = process.env.DISCOGS_AUTH_DIR || "/home/box/discogs-auth";
+  return `${base}/auth.env`;
+}
+
+const OUT = outPath();
+const WORK_DIR = process.env.DISCOGS_WORK_AUTH || "/workspace/discogs-scripts/_auth";
 const UA =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
 
@@ -49,6 +58,7 @@ if (!names.includes("session") && !names.includes("sid")) {
 }
 const parts = names.map((n) => `${n}=${byName.get(n).value}`);
 const text = `COOKIE=${parts.join("; ")}\nUSER_AGENT=${UA}\n`;
+mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, text, { mode: 0o600 });
 chmodSync(OUT, 0o600);
 // Pointer only — never duplicate the secret into the checkout.

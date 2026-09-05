@@ -1,0 +1,81 @@
+name: discogs-bot
+
+# The pack's checks are fully offline — no cookie, no network, no Discogs
+# account — so they run on every push and PR that touches it.
+on:
+  push:
+    branches: [main]
+    paths: ['grok_bots/discogs-bot/**', '.github/workflows/discogs-bot.yml']
+  pull_request:
+    paths: ['grok_bots/discogs-bot/**', '.github/workflows/discogs-bot.yml']
+
+defaults:
+  run:
+    working-directory: grok_bots/discogs-bot
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 is the floor declared in pyproject; 3.13 catches deprecations early.
+        python-version: ['3.9', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Lint
+        run: uv run --python ${{ matrix.python-version }} --group dev ruff check .
+
+      - name: Test
+        run: uv run --python ${{ matrix.python-version }} --group dev pytest
+
+      - name: Smoke (offline HAR replay + har-diff)
+        run: |
+          uv run --python ${{ matrix.python-version }} python \
+            discogs-scripts/collection-search/scripts/search_collection.py 'Domingo Federico' \
+            --from-har discogs-scripts/collection-search/capture/collection-federico.har
+          uv run --python ${{ matrix.python-version }} python \
+            discogs-scripts/har-diff/scripts/diff.py \
+            discogs-scripts/har-diff/fixtures/sample-curls.txt
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No live jar committed
+        run: |
+          if git ls-files | grep -E '(^|/)(auth|personal)\.env$'; then
+            echo "::error::a live auth.env/personal.env is committed"; exit 1
+          fi
+          echo "ok: no jar files tracked"
+
+      - name: Committed HARs carry no Cookie or Authorization value
+        run: |
+          status=0
+          for h in $(git ls-files '*.har'); do
+            python3 - "$h" <<'PY' || status=1
+          import json, sys
+          path = sys.argv[1]
+          with open(path) as fh:
+              har = json.load(fh)
+          leaks = [
+              header["value"]
+              for entry in har["log"]["entries"]
+              for header in entry["request"]["headers"]
+              if header["name"].lower() in ("cookie", "authorization")
+              and header["value"] not in ("REDACTED", "PLACEHOLDER")
+          ]
+          if leaks:
+              print(f"::error file={path}::unredacted auth header in committed HAR")
+              raise SystemExit(1)
+          print(f"ok: {path}")
+          PY
+          done
+          exit $status

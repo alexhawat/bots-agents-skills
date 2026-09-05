@@ -10,7 +10,7 @@ Search the signed-in Discogs collection by text (same as the collection `searchP
   - `operationName=ViewerCollectionListData`
   - variables: `page`, `perPage`, `currency`, `folderId` (0=all), `direction`, `field` (`ADDED`), `search`
   - persistedQuery sha256: `ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b`
-- Artifacts: `capture/collection-federico.har` (redacted fixture — cookies stripped, rows synthetic), `capture/curls.txt`, `capture/response-sample.json`
+- Artifacts: `capture/collection-federico.har` (redacted fixture — cookies stripped, rows synthetic), `capture/curls.txt`, `capture/response-sample.json` (synthetic — response shape only)
 - Auth: shared jar (`$DISCOGS_AUTH_ENV`) — gitignored. HAR exports strip cookies; re-export from DevTools when the session dies.
 
 ## Auth

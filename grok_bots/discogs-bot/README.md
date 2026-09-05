@@ -21,7 +21,7 @@ The offline paths need no cookie, no network, and no Discogs account:
 
 ```bash
 make install   # uv sync --group dev
-make test      # 80+ unit tests over the pure parsers
+make test      # 96 unit tests over the pure parsers
 make smoke     # replay the redacted HAR fixture + run har-diff
 make check     # lint + test; run this before committing
 ```
@@ -39,6 +39,12 @@ works without `/home/box` or `/workspace` existing:
 | `DISCOGS_AUTH_DIR` | `/home/box/discogs-auth` | directory for both files below |
 | `DISCOGS_AUTH_ENV` | `$DISCOGS_AUTH_DIR/auth.env` | `COOKIE=`, `USER_AGENT=` (mode 0600) |
 | `DISCOGS_PERSONAL_ENV` | `$DISCOGS_AUTH_DIR/personal.env` | `USERNAME`, `CURRENCY` |
+| `DISCOGS_WORK_AUTH` | `/workspace/discogs-scripts/_auth` | pointer dir (`AUTH_PATH.txt`) |
+| `DISCOGS_COOKIE_SEED` | box seed path | Chrome cookie seed, exporter only |
+
+The loader (`_lib/auth.py`) and **both** exporters — `export_cookies.py` and the
+CDP helper `export_from_display.mjs` — resolve these the same way, per call, so
+they cannot disagree about where the jar lives.
 
 ```bash
 export DISCOGS_AUTH_DIR=~/.config/discogs-bot
@@ -75,6 +81,13 @@ values. The root `.gitignore` blocks all of these, and `*.har` is denied by defa
 the three committed fixtures are redacted and were added deliberately.
 
 Scripts never print Cookie values, and error text never carries request headers.
+The exporters write the jar once, at mode 0600, and put only a **path pointer**
+(`AUTH_PATH.txt`) under the work tree — the secret is never duplicated into a
+checkout.
+
+CI enforces the last part: `.github/workflows/discogs-bot.yml` fails the build if a
+live `auth.env`/`personal.env` is committed, or if any committed HAR still carries a
+`Cookie`/`Authorization` value.
 
 ## Mutation safety
 
