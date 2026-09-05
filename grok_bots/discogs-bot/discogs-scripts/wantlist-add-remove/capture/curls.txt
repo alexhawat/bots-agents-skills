@@ -1,0 +1,26 @@
+# Discogs Wave 4 mutation cURLs (redacted; no Cookie/Authorization headers)
+# Body values are intentionally replaced with PLACEHOLDER; body field names preserved.
+
+# WANTLIST add — POST /service/catalog/api/graphql — operationName=AddReleasesToWantlist — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"AddReleasesToWantlist","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# WANTLIST remove — POST /service/catalog/api/graphql — operationName=RemoveReleasesFromWantlist — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"RemoveReleasesFromWantlist","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# COLLECTION add — POST /service/catalog/api/graphql — operationName=AddReleaseToCollection — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"AddReleaseToCollection","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# COLLECTION notes set — POST /service/catalog/api/graphql — operationName=EditCollectionItemNote — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"EditCollectionItemNote","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# COLLECTION notes restore — POST /service/catalog/api/graphql — operationName=RemoveCollectionItemNote — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"RemoveCollectionItemNote","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# COLLECTION remove — POST /service/catalog/api/graphql — operationName=RemoveReleaseFromCollection — body fields: operationName, variables, extensions
+curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"RemoveReleaseFromCollection","variables":"PLACEHOLDER","extensions":"PLACEHOLDER"}'
+
+# CART add — navigation mutation; listing id retained, ev redacted
+curl 'https://www.discogs.com/sell/cart/?add=4345527582&ev=PLACEHOLDER'
+
+# CART remove — navigation mutation; listing id retained
+curl 'https://www.discogs.com/sell/cart/?remove=4345527582'

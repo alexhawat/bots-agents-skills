@@ -1,0 +1,26 @@
+# Redacted curls captured while signed in to Discogs.
+# Cookies, authorization/session headers, analytics parameters, and response bodies omitted.
+# Search input used: DMO-55454 (catalog number).
+
+# Catalog-number autocomplete lookup (public API)
+curl -G 'https://www.discogs.com/service/search-component/public/api/autocomplete' \
+  --data-urlencode 'search=DMO-55454' \
+  --data-urlencode 'search_type=MASTER,RELEASE,ARTIST,LABEL' \
+  --data-urlencode 'currency=EUR'
+
+# Release-page user data GraphQL GET observed after the lookup resolved to release 18197845.
+# operationName=UserReleaseData; variable keys: discogsId; persisted-query hash redacted.
+curl -G 'https://www.discogs.com/service/catalog/api/graphql' \
+  --data-urlencode 'operationName=UserReleaseData' \
+  --data-urlencode 'variables={"discogsId":18197845}' \
+  --data-urlencode 'extensions={"persistedQuery":{"version":1,"sha256Hash":"<redacted>"}}'
+
+# GraphQL POSTs observed on the release page (non-lookup feature flag checks).
+# operationName=EvaluateFlags; variable keys: input; auth/session material redacted.
+curl 'https://www.discogs.com/graphql' \
+  -H 'content-type: application/json' \
+  --data-raw '{"operationName":"EvaluateFlags","variables":{"input":"<redacted>"},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"<redacted>"}}}'
+
+# Supporting release-market requests after the catalog-number resolution.
+curl 'https://www.discogs.com/api/shop-page-api/market/release/18197845'
+curl 'https://www.discogs.com/api/shop-page-api/market/release/18197845/seller_count'

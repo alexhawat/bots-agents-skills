@@ -1,0 +1,4 @@
+auth.env
+*.bak
+
+personal.env

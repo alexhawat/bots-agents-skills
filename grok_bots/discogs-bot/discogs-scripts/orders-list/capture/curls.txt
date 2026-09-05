@@ -1,0 +1,37 @@
+# Discogs Scripts Wave 5 — read-only buyer purchases capture
+# Cookie values intentionally redacted.
+# Server-rendered navigations observed via PerformanceNavigationTiming (HTTP 200).
+
+# Buyer purchases/orders list
+curl 'https://www.discogs.com/sell/purchases' \
+  -X GET \
+  -H 'Accept: text/html' \
+  -H 'Cookie: REDACTED' \
+  # request body: none
+  # response content-type: text/html; charset=utf-8; status: 200
+
+# One buyer order detail/status page
+curl 'https://www.discogs.com/sell/order/1106613-4781' \
+  -X GET \
+  -H 'Accept: text/html' \
+  -H 'Cookie: REDACTED' \
+  # request body: none
+  # response content-type: text/html; charset=utf-8; status: 200
+
+# Same-origin header service fetches observed while loading both pages
+curl 'https://www.discogs.com/service/header/public/api/counts' \
+  -X GET \
+  -H 'Accept: application/json' \
+  -H 'Cookie: REDACTED' \
+  # request body: none
+  # response content-type: application/json (observed fetch)
+
+curl 'https://www.discogs.com/service/header/public/api/knockauth' \
+  -X GET \
+  -H 'Accept: application/json' \
+  -H 'Cookie: REDACTED' \
+  # request body: none
+  # response content-type: application/json (observed fetch)
+
+# No order-specific XHR/fetch, GraphQL operationName/hash, or POST was observed;
+# the purchases list and order detail were delivered as HTML navigations.

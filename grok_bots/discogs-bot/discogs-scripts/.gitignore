@@ -1,0 +1,6 @@
+**/auth.env
+**/cookies.txt
+**/*.pem
+**/secrets/
+# HARs often embed cookies — keep local unless scrubbed
+**/capture/*.har

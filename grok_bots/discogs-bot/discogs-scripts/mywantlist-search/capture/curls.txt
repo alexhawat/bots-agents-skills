@@ -1,0 +1,2 @@
+# No meaningful GraphQL/API Fetch/XHR list requests were captured; Discogs rendered the wantlist via document navigation.
+curl -L "https://www.discogs.com/mywantlist?search=Domingo+Federico&page=2"

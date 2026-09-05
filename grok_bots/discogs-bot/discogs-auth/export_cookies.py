@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Export Discogs session Cookie → /home/box/discogs-auth/auth.env.
+
+On this box Chrome SQLite Cookies are encrypted with no os_crypt key.
+Prefer the sand plaintext seed (/home/box/agent-data/chrome-cookie-seed.json),
+then fall back to best-effort profile decrypt.
+
+Never prints cookie values. Exit 0 on success, 1 on failure.
+"""
+from __future__ import annotations
+
+import base64
+import json
+import os
+import shutil
+import sqlite3
+import sys
+import tempfile
+from hashlib import pbkdf2_hmac
+from pathlib import Path
+
+OUT = Path("/home/box/discogs-auth/auth.env")
+SEED = Path("/home/box/agent-data/chrome-cookie-seed.json")
+UA = (
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+)
+WORK = Path("/workspace/discogs-scripts/_auth")
+
+
+def _write(parts: list[str], names: list[str], source: str) -> int:
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(f"COOKIE={'; '.join(parts)}\nUSER_AGENT={UA}\n")
+    os.chmod(OUT, 0o600)
+    WORK.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(OUT, WORK / "auth.env")
+    os.chmod(WORK / "auth.env", 0o600)
+    (WORK / "AUTH_PATH.txt").write_text(str(OUT) + "\n")
+    print(f"ok source={source} cookies={len(names)} names={sorted(set(names))} path={OUT}")
+    return 0
+
+
+
+def export_from_this_display() -> int | None:
+    """Live jar from this agent's Chrome via official sand-host CDP helper."""
+    import subprocess
+    helper = Path("/home/box/discogs-auth/export_from_display.mjs")
+    if not helper.is_file():
+        return None
+    r = subprocess.run(
+        ["node", "--experimental-websocket", str(helper)],
+        capture_output=True,
+        text=True,
+    )
+    if r.stdout:
+        print(r.stdout.rstrip())
+    if r.returncode == 0:
+        return 0
+    return None
+
+def export_from_seed() -> int | None:
+    if not SEED.is_file():
+        return None
+    try:
+        data = json.loads(SEED.read_text())
+    except Exception:
+        return None
+    rows = [c for c in (data.get("cookies") or []) if "discogs" in (c.get("domain") or "").lower()]
+    # last write wins per name; prefer names with values
+    by_name: dict[str, str] = {}
+    for c in rows:
+        name = c.get("name") or ""
+        val = c.get("value") or ""
+        if not name or not val:
+            continue
+        by_name[name] = val
+    names = list(by_name)
+    if "session" not in by_name and "sid" not in by_name:
+        return None
+    parts = [f"{n}={by_name[n]}" for n in names]
+    return _write(parts, names, f"seed:{SEED}")
+
+
+def profiles():
+    root = Path("/home/box")
+    for p in sorted(root.glob("chrome-profile*/Default/Cookies"), key=lambda x: x.stat().st_mtime, reverse=True):
+        yield p.parent.parent
+
+
+def load_key(profile: Path):
+    ls = profile / "Local State"
+    if not ls.exists():
+        return None
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM  # noqa: F401
+    except ImportError:
+        return None
+    enc = json.loads(ls.read_text()).get("os_crypt", {}).get("encrypted_key")
+    if not enc:
+        return None
+    raw = base64.b64decode(enc)
+    if raw.startswith(b"ChromeSafeStorage"):
+        raw = raw[len(b"ChromeSafeStorage") :]
+    keys = [pbkdf2_hmac("sha1", b"", b"saltysalt", 1, dklen=16)]
+    if len(raw) in (16, 32):
+        keys.append(raw)
+    return keys
+
+
+def decrypt(key: bytes, data: bytes):
+    if not data or data[:3] not in (b"v10", b"v11"):
+        return None
+    try:
+        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        return AESGCM(key).decrypt(data[3:15], data[15:], None)
+    except Exception:
+        return None
+
+
+def export_from(profile: Path, keys):
+    db = profile / "Default" / "Cookies"
+    if not db.exists():
+        return None
+    tmp = tempfile.mktemp(suffix=".db")
+    shutil.copy2(db, tmp)
+    con = sqlite3.connect(tmp)
+    rows = con.execute(
+        "select name, encrypted_value, value from cookies where host_key like '%discogs%'"
+    ).fetchall()
+    con.close()
+    os.unlink(tmp)
+    for key in keys:
+        parts, names = [], []
+        for name, enc, val in rows:
+            plain = None
+            if isinstance(val, str) and val:
+                plain = val.encode()
+            elif isinstance(val, bytes) and val:
+                plain = val
+            elif enc:
+                plain = decrypt(key, enc if isinstance(enc, bytes) else bytes(enc))
+            if not plain:
+                continue
+            try:
+                s = plain.decode("utf-8")
+            except Exception:
+                continue
+            parts.append(f"{name}={s}")
+            names.append(name)
+        if "session" in names or "sid" in names:
+            return parts, names
+    return None
+
+
+def main() -> int:
+    live = export_from_this_display()
+    if live is not None:
+        return live
+    got = export_from_seed()
+    if got is not None:
+        return got
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    for profile in profiles():
+        keys = load_key(profile)
+        if not keys:
+            continue
+        gotp = export_from(profile, keys)
+        if not gotp:
+            continue
+        parts, names = gotp
+        return _write(parts, names, f"profile:{profile.name}")
+    print(
+        "fail: no discogs session in chrome-cookie-seed.json and could not decrypt "
+        "chrome-profile* Cookies. Sign in via Discogs-Bot Chrome, wait for "
+        "sand-cookie-persist to refresh the seed, then re-run this script."
+    )
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

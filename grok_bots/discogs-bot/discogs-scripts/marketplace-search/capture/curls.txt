@@ -1,0 +1,64 @@
+# Discogs Wave 1 — redacted cURL patterns from the captured Fetch/XHR flows.
+# No Cookie/Authorization value is present; every secret slot is PLACEHOLDER.
+
+# Marketplace search navigation (keys: format, q)
+curl -G 'https://www.discogs.com/sell/list' \
+  --data-urlencode 'format=Vinyl' \
+  --data-urlencode 'q=Pugliese' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# Shared header helpers observed during marketplace/release flows
+curl -G 'https://www.discogs.com/service/header/public/api/counts' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+curl -G 'https://www.discogs.com/service/header/public/api/knockout' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# Release listings and seller count (releaseId/path observed: 7146198)
+curl -G 'https://www.discogs.com/api/shop-page-api/market/release/7146198' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+curl -G 'https://www.discogs.com/api/shop-page-api/market/release/7146198/seller_count' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# Wantlist listing request (keys observed: sellerRatingMin, sort, sortOrder, count, offset, fast)
+curl -G 'https://www.discogs.com/api/shop-page-api/sell_item' \
+  --data-urlencode 'sellerRatingMin=90' \
+  --data-urlencode 'sort=listedDate' \
+  --data-urlencode 'sortOrder=descending' \
+  --data-urlencode 'count=25' \
+  --data-urlencode 'offset=0' \
+  --data-urlencode 'fast=true' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# Wantlist seller filter helper (key: sellerRatingMin)
+curl -G 'https://www.discogs.com/api/shop-page-api/sellers' \
+  --data-urlencode 'sellerRatingMin=90' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# Deferred release price/stats GraphQL (GET; operationName and variable key observed)
+curl -G 'https://www.discogs.com/service/catalog/api/graphql' \
+  --data-urlencode 'operationName=DeferredReleaseData' \
+  --data-urlencode 'variables={"discogsId":7146198}' \
+  --data-urlencode 'extensions={"persistedQuery":{"version":1,"sha256Hash":"PLACEHOLDER"}}' \
+  -H 'accept: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER'
+
+# GraphQL feature flags also seen on the release page (POST; operationName: EvaluateFlags)
+curl -X POST 'https://www.discogs.com/graphql' \
+  -H 'content-type: application/json' \
+  -H 'cookie: PLACEHOLDER' \
+  -H 'authorization: PLACEHOLDER' \
+  --data-raw '{"operationName":"EvaluateFlags","variables":{"input":{"namespace":"PLACEHOLDER","flagKeys":["PLACEHOLDER"]}},"query":"PLACEHOLDER"}'

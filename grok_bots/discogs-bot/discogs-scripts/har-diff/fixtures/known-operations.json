@@ -1,0 +1,12 @@
+{
+  "source": "Wave 1–4 captures (2026-09-05); hashes from scripts/SOURCE.md and whoami",
+  "operations": {
+    "ViewerCollectionListData": "ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b",
+    "AddReleasesToWantlist": "d07fa55f88404b5d0e5253faf962ed104ad1efd3af871c9281b76e874d4a2bf4",
+    "RemoveReleasesFromWantlist": "ab4a277f4c5d9da56ba17d4b88643c51a1935f500813133c55fe5a340625d06f",
+    "AddReleaseToCollection": "60200b3acb935a2304a8b7eb19e6b480aa05ca656a24206d9ac41ca0d7c0aac9",
+    "RemoveReleaseFromCollection": "93242d935addda589c5114a57e09b404213bdd55737fb6bdc2b91a6c3fe7337c",
+    "EditCollectionItemNote": "759194518a1e8634735edc1b68d5c511b467fd1901249a7ac7d2d8387f7899db",
+    "RemoveCollectionItemNote": "098c6c80dd353a74a5263ac67fdc43637398940162e01d3ab034882263f050cd"
+  }
+}
