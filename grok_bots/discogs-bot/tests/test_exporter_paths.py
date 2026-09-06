@@ -143,6 +143,23 @@ def test_cdp_helper_honours_the_same_env_vars_as_python():
         assert var in src, f"CDP helper ignores {var}"
 
 
+def test_cdp_helper_resolves_paths_per_call_not_at_module_load():
+    """Regression: `const OUT = outPath()` snapshotted the env at process start.
+
+    Harmless for the CLI path (subprocess with env already set) but wrong for
+    an importing caller, and out of step with out_path()/work_dir() in the
+    Python exporter. Mirrors test_paths_are_resolved_per_call_not_at_import.
+    """
+    from conftest import PACK_ROOT
+    src = (PACK_ROOT / "discogs-auth" / "export_from_display.mjs").read_text()
+    assert "const OUT = outPath()" not in src
+    assert "const WORK_DIR = process.env" not in src
+    # the functions exist and are called at the point of use
+    assert "export function outPath()" in src
+    assert "export function workDir()" in src
+    assert "const out = outPath();" in src
+
+
 def test_shipped_response_sample_is_synthetic():
     """The pack is public: no real collection inventory in committed fixtures."""
     from conftest import SCRIPTS_ROOT

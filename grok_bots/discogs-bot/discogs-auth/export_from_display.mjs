@@ -9,14 +9,21 @@ import { SAND_BOX_CDP_PORT_BASE } from "/home/box/sand-host/box-scripts/box-cont
 
 // Path resolution mirrors _lib/auth.py and export_cookies.py so the exporter
 // and the loader can never disagree about where the jar lives.
-function outPath() {
+//
+// Resolved per call, never snapshotted into a module constant: this file is
+// usually run as a CLI with the env already set, but it is also importable,
+// and a caller that sets DISCOGS_* after import must still get the path it
+// asked for. Same contract as out_path()/work_dir() in export_cookies.py.
+export function outPath() {
   if (process.env.DISCOGS_AUTH_ENV) return process.env.DISCOGS_AUTH_ENV;
   const base = process.env.DISCOGS_AUTH_DIR || "/home/box/discogs-auth";
   return `${base}/auth.env`;
 }
 
-const OUT = outPath();
-const WORK_DIR = process.env.DISCOGS_WORK_AUTH || "/workspace/discogs-scripts/_auth";
+export function workDir() {
+  return process.env.DISCOGS_WORK_AUTH || "/workspace/discogs-scripts/_auth";
+}
+
 const UA =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
 
@@ -58,12 +65,14 @@ if (!names.includes("session") && !names.includes("sid")) {
 }
 const parts = names.map((n) => `${n}=${byName.get(n).value}`);
 const text = `COOKIE=${parts.join("; ")}\nUSER_AGENT=${UA}\n`;
-mkdirSync(dirname(OUT), { recursive: true });
-writeFileSync(OUT, text, { mode: 0o600 });
-chmodSync(OUT, 0o600);
+const out = outPath();
+mkdirSync(dirname(out), { recursive: true });
+writeFileSync(out, text, { mode: 0o600 });
+chmodSync(out, 0o600);
 // Pointer only — never duplicate the secret into the checkout.
-mkdirSync(WORK_DIR, { recursive: true });
-writeFileSync(`${WORK_DIR}/AUTH_PATH.txt`, `${OUT}\n`, { mode: 0o644 });
+const workDirPath = workDir();
+mkdirSync(workDirPath, { recursive: true });
+writeFileSync(`${workDirPath}/AUTH_PATH.txt`, `${out}\n`, { mode: 0o644 });
 console.log(
-  `ok source=cdp:${port} cookies=${names.length} names=${JSON.stringify(names.sort())} path=${OUT}`
+  `ok source=cdp:${port} cookies=${names.length} names=${JSON.stringify(names.sort())} path=${out}`
 );
