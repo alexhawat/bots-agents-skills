@@ -14,10 +14,10 @@ UA: `DiscogsScripts/1.0` (+ optional `--contact`).
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 missing-from-series/scripts/missing.py --series "Blue Note The Complete" --limit-series 50
-python3 missing-from-series/scripts/missing.py --release-id 249504 --limit-series 100
-python3 missing-from-series/scripts/missing.py --series "Some Series" --json
+cd discogs-scripts
+uv run python missing-from-series/scripts/missing.py --series "Blue Note The Complete" --limit-series 50
+uv run python missing-from-series/scripts/missing.py --release-id 249504 --limit-series 100
+uv run python missing-from-series/scripts/missing.py --series "Some Series" --json
 ```
 
 Prints series name, owned count, missing releases (`id`, title, year, catno), short owned list.

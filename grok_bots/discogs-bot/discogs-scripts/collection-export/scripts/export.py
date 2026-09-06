@@ -21,6 +21,7 @@ from _lib.collection_fetch import (  # noqa: E402
     fetch_rows,
     public_row,
 )
+from _lib.errors import cli_main  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 OUT = TASK / "out"
@@ -80,4 +81,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

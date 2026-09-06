@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 from _lib.http import get_text  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -331,7 +332,7 @@ def cmd_list(page: int, as_json: bool) -> None:
 
 def cmd_status(order_id: str, as_json: bool) -> None:
     if not re.fullmatch(r"[0-9]+-[0-9]+", order_id):
-        raise SystemExit(f"Invalid order id format: {order_id!r} (expect NNN-NNN)")
+        raise DiscogsError(f"Invalid order id format: {order_id!r} (expect NNN-NNN)")
     url = ORDER_URL.format(order_id=order_id)
     html = _fetch_html(url)
     detail = parse_order_detail(html, order_id)
@@ -391,4 +392,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

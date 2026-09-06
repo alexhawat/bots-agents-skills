@@ -8,15 +8,15 @@ Same as collection-export / collection-search: `ViewerCollectionListData` persis
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-dupes/scripts/dupes.py
-python3 collection-dupes/scripts/dupes.py --limit 200   # debug / partial scan
-python3 collection-dupes/scripts/dupes.py --folder-id 0 --min-count 2
+cd discogs-scripts
+uv run python collection-dupes/scripts/dupes.py
+uv run python collection-dupes/scripts/dupes.py --limit 200   # debug / partial scan
+uv run python collection-dupes/scripts/dupes.py --folder-id 0 --min-count 2
 ```
 
 Groups by `release_id`, prints count, title, artists, each collection item id + folder + addedAt.

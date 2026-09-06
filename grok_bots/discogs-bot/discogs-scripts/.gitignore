@@ -1,6 +1,15 @@
 **/auth.env
+**/personal.env
 **/cookies.txt
 **/*.pem
 **/secrets/
-# HARs often embed cookies — keep local unless scrubbed
+
+# HARs often embed cookies — keep local unless scrubbed.
 **/capture/*.har
+# Allowlisted redacted fixtures: Cookie/Authorization stripped from every entry,
+# ids and rows replaced with placeholders. They back `make smoke` and the
+# `--from-har` path, so a clone can run offline. Add a new one only after
+# verifying it the same way.
+!collection-search/capture/collection-federico.har
+!wantlist-add-remove/capture/wave4.har
+!barcode-or-catno-lookup/capture/barcode.har

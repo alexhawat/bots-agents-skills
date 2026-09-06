@@ -3,7 +3,7 @@
 Saved 2026-09-05. **Do not build from this list until asked.**  
 Existing: `collection-search` (GraphQL `ViewerCollectionListData`, live-verified).
 
-Owner: Discogs Scripts (903704f2…) = capture → script → API replay.  
+Owner: Discogs Scripts = capture → script → API replay.  
 UI browse/checkout stays human browser / optional UI bot — Discogs-Bot owns auth + scripts.
 
 ## Named backlog
@@ -54,7 +54,7 @@ UI browse/checkout stays human browser / optional UI bot — Discogs-Bot owns au
 ## Proven so far (collection-search)
 - Collection-scoped GraphQL search matches release + **track** text (fuzzy), e.g. song `La bruja`.
 - `--artist-match` filters primary artists only — drops pure song hits; use raw search for track titles.
-- Auth: session Cookie in task `auth.env` (gitignored). HAR often omits cookies.
+- Auth: session Cookie in the shared jar (gitignored). HAR often omits cookies.
 
 ## Highest leverage next (suggested priority)
 1. `marketplace-search` + `release-listings`
@@ -63,7 +63,7 @@ UI browse/checkout stays human browser / optional UI bot — Discogs-Bot owns au
 4. `collection-export` / `collection-dupes`
 5. `marketplace-add-to-cart` (hard confirm)
 
-## For dr eggbot / persona improvements
+## For persona improvements
 - Encode this backlog in Discogs Scripts profile or a skill checklist (capture order, mutate = confirm).
 - Clarify hybrid tasks (photo ID) vs pure replay.
 - Keep single-owner rule: scripts here, heavy UI elsewhere.

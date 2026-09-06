@@ -14,11 +14,11 @@ Response: `items[]`, `totalCount`. Item fields include `itemId`, `price{amount,c
 Text search (`q`) is **client-side** filter on title/artists — API has no `q`.
 
 ## Auth
-`/home/box/discogs-auth/auth.env`
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`)
 
 ## CLI
 ```bash
-cd /workspace/discogs-scripts
-python3 wantlist-search/scripts/search.py --q tango --count 50 --format-name Vinyl --currency EUR
-python3 wantlist-search/scripts/search.py --format-name Vinyl --seller-rating-min 90
+cd discogs-scripts
+uv run python wantlist-search/scripts/search.py --q tango --count 50 --format-name Vinyl --currency EUR
+uv run python wantlist-search/scripts/search.py --format-name Vinyl --seller-rating-min 90
 ```

@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import DiscogsAPIError, cli_main  # noqa: E402
 from _lib.graphql_mutate import graphql_mutate, require_confirm  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -84,9 +85,9 @@ def main() -> None:
         variables=variables,
     )
     if data.get("errors"):
-        raise SystemExit(f"GraphQL errors ({op}): {data['errors']!r}")
+        raise DiscogsAPIError(f"GraphQL errors ({op}): {data['errors']!r}")
     print(json.dumps(data, indent=2, ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

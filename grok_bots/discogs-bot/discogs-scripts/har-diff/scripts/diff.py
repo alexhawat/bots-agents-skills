@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 import urllib.parse
 from pathlib import Path
 
@@ -64,7 +63,8 @@ def _extract_from_text(text: str) -> dict[str, set[str]]:
 
     # Also scan line-by-line / URL params (GET persisted queries)
     for line in text.splitlines():
-        if "graphql" not in line.lower() and "operationName" not in line and "sha256Hash" not in line:
+        low = line.lower()
+        if "graphql" not in low and "operationName" not in line and "sha256Hash" not in line:
             # still allow comment lines that name ops without hashes
             ops_only = OP_RE.findall(line) or OP_URL_RE.findall(line)
             for op in ops_only:

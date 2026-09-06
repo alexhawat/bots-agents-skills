@@ -21,6 +21,7 @@ from _lib.collection_fetch import (  # noqa: E402
     public_row,
     year_int,
 )
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 
@@ -52,7 +53,7 @@ def main() -> None:
             args.format_substr,
         ]
     ):
-        raise SystemExit(
+        raise DiscogsError(
             "Provide at least one filter: --label, --year/--year-min/--year-max, --format"
         )
 
@@ -102,4 +103,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

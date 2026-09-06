@@ -2,6 +2,10 @@
 
 Canonical Cookie jar for Discogs-Bot script replay. Uses Discogs-Bot's own Chrome session on this box.
 
+Paths below are the box defaults. `DISCOGS_AUTH_DIR` / `DISCOGS_AUTH_ENV` /
+`DISCOGS_PERSONAL_ENV` override them for an off-box clone — both the exporters and
+`_lib/auth.py` honour the same variables.
+
 ## Login (first time / when dead)
 1. Open https://www.discogs.com/ in Discogs-Bot's Chrome (browserUse on this box).
 2. If login/2FA/captcha: `request_box_help` — user types secrets on the desktop. Agent never sees them.
@@ -15,7 +19,8 @@ Canonical Cookie jar for Discogs-Bot script replay. Uses Discogs-Bot's own Chrom
 Never print Cookie values. Never paste into chat.
 
 ## Files
-- `auth.env` — `COOKIE=`… and `USER_AGENT=`… (mode 0600). Never commit. Never include in export packs.
+- `auth.env` — `COOKIE=`… and `USER_AGENT=`… (created at mode 0600, never chmod-after-write).
+  Never commit. Never include in export packs.
 - `personal.env` — `USERNAME`, `CURRENCY`, … Mode 0600. Never commit. Never include in export packs.
 - `export_cookies.py` — orchestrator (CDP → seed → decrypt).
 - `export_from_display.mjs` — live jar writer for this agent's Chrome.
@@ -29,4 +34,5 @@ Scripts under `/workspace/discogs-scripts/<task>/` load via `_lib/auth.py` merge
 
 Fail with “COOKIE missing — refresh auth.env / re-login via Discogs-Bot Chrome + request_box_help” when the jar is empty.
 
-Pointers: `/workspace/discogs-scripts/_auth/AUTH_PATH.txt`, `PERSONAL_PATH.txt`.
+Pointers: `_auth/AUTH_PATH.txt`, `PERSONAL_PATH.txt` — these hold the *path* only.
+The exporter deliberately never copies the jar itself into the work tree.

@@ -16,6 +16,12 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import (  # noqa: E402
+    DiscogsAuthError,
+    DiscogsError,
+    DiscogsHTTPError,
+    cli_main,
+)
 from _lib.http import graphql_get  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -55,14 +61,14 @@ def check_viewer(auth: dict[str, str]) -> tuple[str | None, str | None]:
             sha256_hash=LIST_SHA,
             variables=variables,
         )
-    except SystemExit as e:
-        msg = str(e)
-        if "HTTP 401" in msg:
-            return "http401", None
-        # Treat other HTTP errors as dead session for refresh purposes if 403
-        if "HTTP 403" in msg:
+    except DiscogsHTTPError as e:
+        # 401/403 both mean "this jar is no longer accepted" for refresh purposes.
+        if e.status in (401, 403):
             return "http401", None
         raise
+    except DiscogsAuthError:
+        # viewer=null surfaced from the shared fetch helper.
+        return "null", None
 
     viewer = (data.get("data") or {}).get("viewer")
     if viewer is None:
@@ -155,9 +161,13 @@ def main() -> int:
     return 1
 
 
-if __name__ == "__main__":
+def _main() -> int:
+    """Wrap main so a transport failure reads as an error, not a traceback."""
     try:
-        raise SystemExit(main())
+        return main()
     except urllib.error.URLError as e:
-        print(f"network error: {e}", file=sys.stderr)
-        raise SystemExit(1) from e
+        raise DiscogsError(f"network error: {e}") from e
+
+
+if __name__ == "__main__":
+    cli_main(_main)

@@ -17,19 +17,19 @@ POST `https://www.discogs.com/service/catalog/api/graphql`
 - `collection-export` CSV/JSON column `collection_item_id`
 - GraphQL `UserReleaseData` / collection list item `discogsId`
 
-Capture: `capture/wave4.har` (same session as wantlist-add-remove). See `capture/SOURCE.md`.
+Capture: `../../wantlist-add-remove/capture/wave4.har` (same session as wantlist-add-remove). See `capture/SOURCE.md`.
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` — never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) — never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 collection-add-remove/scripts/collection.py add --release-id 2825456
-python3 collection-add-remove/scripts/collection.py remove --item-id 2181219053
+cd discogs-scripts
+uv run python collection-add-remove/scripts/collection.py add --release-id 2825456
+uv run python collection-add-remove/scripts/collection.py remove --item-id 2181219053
 # live
-python3 collection-add-remove/scripts/collection.py add --release-id 2825456 --confirm
-python3 collection-add-remove/scripts/collection.py remove --item-id 2181219053 --confirm
+uv run python collection-add-remove/scripts/collection.py add --release-id 2825456 --confirm
+uv run python collection-add-remove/scripts/collection.py remove --item-id 2181219053 --confirm
 ```

@@ -8,6 +8,8 @@ import urllib.parse
 import urllib.request
 from typing import Any
 
+from _lib.errors import DiscogsHTTPError
+
 DEFAULT_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
@@ -61,7 +63,7 @@ def get_bytes(
     except urllib.error.HTTPError as e:
         body = e.read()[:800]
         # Never include request Cookie in error text
-        raise SystemExit(f"HTTP {e.code} for {url.split('?', 1)[0]}: {body!r}") from e
+        raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
 
 
 def get_text(
@@ -109,7 +111,7 @@ def get_public_json(url: str, user_agent: str | None = None, timeout: int = 60) 
             return json.loads(data.decode("utf-8"))
     except urllib.error.HTTPError as e:
         body = e.read()[:800]
-        raise SystemExit(f"HTTP {e.code} for {url}: {body!r}") from e
+        raise DiscogsHTTPError(e.code, url, body) from e
 
 
 def graphql_get(

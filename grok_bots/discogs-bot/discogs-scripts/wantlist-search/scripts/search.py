@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import cli_main  # noqa: E402
 from _lib.http import get_json  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -117,4 +118,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

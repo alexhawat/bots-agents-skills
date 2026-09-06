@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import cli_main  # noqa: E402
 from _lib.http import get_json, get_text  # noqa: E402
 from _lib.mp_html import parse_marketplace_rows  # noqa: E402
 
@@ -72,4 +73,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

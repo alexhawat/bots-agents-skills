@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import DiscogsAPIError, DiscogsAuthError, cli_main  # noqa: E402
 from _lib.http import graphql_get  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -41,12 +42,12 @@ def fetch_folders(auth: dict[str, str], currency: str = "EUR") -> tuple[list[dic
     )
     viewer = (data.get("data") or {}).get("viewer")
     if viewer is None:
-        raise SystemExit(
+        raise DiscogsAuthError(
             "viewer=null — session dead or COOKIE incomplete. "
-            "Refresh /home/box/discogs-auth/auth.env"
+            "Run auth-refresh/scripts/refresh.py --check-only"
         )
     if data.get("errors"):
-        raise SystemExit(f"GraphQL errors: {data['errors']!r}")
+        raise DiscogsAPIError(f"GraphQL errors: {data['errors']!r}")
 
     folders: list[dict] = []
     for edge in ((viewer.get("collectionFolders") or {}).get("edges") or []):
@@ -97,4 +98,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

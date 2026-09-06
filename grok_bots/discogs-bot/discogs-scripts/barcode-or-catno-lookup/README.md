@@ -21,16 +21,16 @@ Shared helpers: `_lib/discogs_search.py`.
 
 ## Auth
 
-`/home/box/discogs-auth/auth.env` via `_lib/auth.py` for autocomplete (optional) and collection check. Never print Cookie.
+`$DISCOGS_AUTH_ENV` (default `/home/box/discogs-auth/auth.env`) via `_lib/auth.py` for autocomplete (optional) and collection check. Never print Cookie.
 
 ## CLI
 
 ```bash
-cd /workspace/discogs-scripts
-python3 barcode-or-catno-lookup/scripts/lookup.py DMO-55454
-python3 barcode-or-catno-lookup/scripts/lookup.py --catno DMO-55454
-python3 barcode-or-catno-lookup/scripts/lookup.py --barcode 0724361234567
-python3 barcode-or-catno-lookup/scripts/lookup.py DMO-55454 --check-collection
+cd discogs-scripts
+uv run python barcode-or-catno-lookup/scripts/lookup.py DMO-55454
+uv run python barcode-or-catno-lookup/scripts/lookup.py --catno DMO-55454
+uv run python barcode-or-catno-lookup/scripts/lookup.py --barcode 0724361234567
+uv run python barcode-or-catno-lookup/scripts/lookup.py DMO-55454 --check-collection
 ```
 
 Expect release **18197845** for `DMO-55454`.

@@ -17,6 +17,7 @@ sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
 from _lib.discogs_search import PUBLIC_UA, autocomplete  # noqa: E402
+from _lib.errors import DiscogsError, cli_main  # noqa: E402
 from _lib.http import get_public_json  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -38,7 +39,7 @@ def resolve_artist_id(name: str, auth: dict | None) -> tuple[int, str]:
         # Fallback: any hit that looks like artist from public-ish autocomplete
         artists = [h for h in hits if "artist" in (h.kind or "").lower()]
     if not artists:
-        raise SystemExit(f"No artist autocomplete hit for {name!r}")
+        raise DiscogsError(f"No artist autocomplete hit for {name!r}")
     best = artists[0]
     return best.discogs_id, best.title or name
 
@@ -77,7 +78,7 @@ def main() -> None:
     auth = None
     try:
         auth = load_auth(task_root=TASK)
-    except SystemExit:
+    except DiscogsError:
         auth = None
 
     if args.artist_id:
@@ -118,4 +119,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)

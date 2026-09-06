@@ -1,0 +1,35 @@
+[project]
+name = "discogs-bot"
+version = "1.0.0"
+description = "Discogs session-replay automation pack: capture once, replay the API."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+
+# The automation scripts are standard-library only. `cryptography` is optional
+# and only enables the Chrome SQLite cookie-decrypt fallback in export_cookies.py.
+dependencies = []
+
+[project.optional-dependencies]
+decrypt = ["cryptography>=42.0"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["discogs-scripts"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = ["discogs-scripts/*/capture", "tests/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E402: task scripts must insert the pack root on sys.path before importing _lib.
+ignore = ["E402"]

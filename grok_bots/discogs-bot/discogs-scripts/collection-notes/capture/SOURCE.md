@@ -1,7 +1,7 @@
 # Capture notes — collection-notes
 
 - Date: 2026-09-05
-- HAR: `wave4.har` (copy of wantlist-add-remove/capture/wave4.har)
+- HAR: `../../wantlist-add-remove/capture/wave4.har` (shared redacted capture)
 - Curls: `../../wantlist-add-remove/capture/curls.txt`
 - Ops (exact hashes from HAR):
   - `EditCollectionItemNote` sha `759194518a1e8634735edc1b68d5c511b467fd1901249a7ac7d2d8387f7899db`

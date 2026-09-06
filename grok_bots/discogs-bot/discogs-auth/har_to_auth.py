@@ -7,7 +7,14 @@ import os
 import sys
 from pathlib import Path
 
-OUT = Path("/home/box/discogs-auth/auth.env")
+
+# Resolved per call, not at import — see export_cookies.py.
+def out_path() -> Path:
+    """Match _lib.auth resolution so exporter and loader never disagree."""
+    if os.environ.get("DISCOGS_AUTH_ENV"):
+        return Path(os.environ["DISCOGS_AUTH_ENV"])
+    base = os.environ.get("DISCOGS_AUTH_DIR") or "/home/box/discogs-auth"
+    return Path(base) / "auth.env"
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
@@ -17,7 +24,8 @@ UA = (
 def best_cookie(har: dict) -> tuple[str, str] | None:
     best = None
     for e in har.get("log", {}).get("entries", []):
-        headers = {h.get("name", "").lower(): h.get("value") or "" for h in e.get("request", {}).get("headers", [])}
+        req_headers = e.get("request", {}).get("headers", [])
+        headers = {h.get("name", "").lower(): h.get("value") or "" for h in req_headers}
         cookie = headers.get("cookie") or ""
         if not cookie or "REDACTED" in cookie.upper():
             continue
@@ -40,16 +48,31 @@ def main() -> int:
         print("usage: har_to_auth.py <file.har>")
         return 2
     path = Path(sys.argv[1])
-    har = json.loads(path.read_text())
+    if not path.is_file():
+        print(f"fail: no such HAR: {path}")
+        return 1
+    try:
+        har = json.loads(path.read_text())
+    except json.JSONDecodeError as e:
+        print(f"fail: {path} is not valid JSON: {e}")
+        return 1
     got = best_cookie(har)
     if not got:
         print(f"fail: no usable Cookie header in {path}")
         return 1
     cookie, ua = got
     names = sorted({p.split("=", 1)[0].strip() for p in cookie.split(";") if "=" in p})
-    OUT.write_text(f"COOKIE={cookie}\nUSER_AGENT={ua}\n")
-    os.chmod(OUT, 0o600)
-    print(f"ok path={OUT} cookie_len={len(cookie)} names={names}")
+    # Create at 0600 before writing: write_text() would create at the umask
+    # default (0644), leaving the cookie world-readable until the chmod.
+    out = out_path()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.write(fd, f"COOKIE={cookie}\nUSER_AGENT={ua}\n".encode())
+    finally:
+        os.close(fd)
+    os.chmod(out, 0o600)
+    print(f"ok path={out} cookie_len={len(cookie)} names={names}")
     return 0
 
 

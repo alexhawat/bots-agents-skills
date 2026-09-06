@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from _lib.auth import load_auth  # noqa: E402
+from _lib.errors import ConfirmationRequired, cli_main  # noqa: E402
 from _lib.http import get_text  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
@@ -42,7 +43,7 @@ def main() -> None:
         print(f"# GET {url}")
         print("# hard confirm required: pass BOTH --confirm AND --i-really-mean-it")
         print("# dry-run: refusing to mutate cart (exit 2)")
-        raise SystemExit(2)
+        raise ConfirmationRequired("")
 
     auth = load_auth(task_root=TASK)
     html = get_text(url, auth, headers={"accept": "text/html,application/xhtml+xml"})
@@ -60,4 +61,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    cli_main(main)
