@@ -34,5 +34,19 @@ See inventory in `docs/discogs-capture-to-script.SKILL.md` and folders under `di
 No backlog drain unprompted. No secrets in chat/persona/templates. No inventing endpoints or collection state.
 
 // install
-See README.md in this folder. Off-box clones override the box paths with
-`DISCOGS_AUTH_DIR`; `make test` / `make smoke` verify a copy with no account.
+Script tree + auth helpers are **not** in the Grok Bot template card. Copy them
+from this pack (clone the bots-agents-skills repo that contains this folder):
+
+```
+cp -a grok_bots/discogs-bot/discogs-scripts/. /workspace/discogs-scripts/
+cp -a grok_bots/discogs-bot/discogs-auth/. /home/box/discogs-auth/
+```
+
+Then sign in to Discogs in that bot's Chrome, run
+`python3 /home/box/discogs-auth/export_cookies.py`, then `auth-refresh --check-only`.
+Set `personal.env` from the example. Never commit or ship `auth.env` /
+`personal.env`. Full steps + clone URL: `README.md` in this folder. Off-box clones
+override box paths with `DISCOGS_AUTH_DIR`; `make test` / `make smoke` verify
+without an account.
+
+Public template card: https://x.ai/bot/m5Xjk7EhNokKF49YF9XuW
