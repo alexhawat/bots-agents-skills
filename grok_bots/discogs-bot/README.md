@@ -97,7 +97,7 @@ exits **2**. Pass `--confirm` to execute. Adding to the cart needs `--confirm` *
 
 ## Layout
 
-- `PERSONA.md` — storefront + scrubbed charter (for humans / template authors)
+- `PERSONA.md` — storefront + scrubbed charter **// version 4.2** (for humans / template authors)
 - `docs/` — capture→script skill, `EXPORT.md`, `MANUAL-SMOKE-TESTS.md` (live-session checks)
 - `discogs-scripts/` — automation tree: `_lib/` + 27 task folders
 - `discogs-auth/` — cookie export helpers + `*.example` env files

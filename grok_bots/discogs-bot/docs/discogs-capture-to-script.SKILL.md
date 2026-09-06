@@ -46,7 +46,7 @@ Loader: `/workspace/discogs-scripts/_lib/auth.py` merges auth.env → personal.e
 ## Backlog
 
 Source of truth: `/workspace/discogs-scripts/AUTOMATION-BACKLOG.md`.  
-Persona live list: Discogs-Bot `// version 4.1` (kept in the bot's own profile).  
+Persona live list: Discogs-Bot `// version 4.2` (kept in the bot's own profile).  
 Exportable surface: `docs/EXPORT.md`.
 
 **Live** (on disk under `/workspace/discogs-scripts/<slug>/scripts/`, shared Cookie — inventory 2026-09-05, matches persona v4.1):
