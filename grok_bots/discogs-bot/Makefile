@@ -1,7 +1,7 @@
 # Discogs-Bot — dev tasks. Everything runs through uv.
 #   https://docs.astral.sh/uv/
 .DEFAULT_GOAL := help
-.PHONY: help install test lint fmt check auth-check smoke clean
+.PHONY: help install test lint fmt check auth-check smoke har-guard clean
 
 help: ## Show this help
 	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
@@ -34,3 +34,8 @@ smoke: ## Offline smoke test: replay the redacted HAR, no network or auth
 clean: ## Remove caches and build artifacts
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
 	rm -rf .pytest_cache .ruff_cache
+
+har-guard: ## Check committed HARs carry no live session material (same check as CI)
+	@root=$$(git rev-parse --show-toplevel); \
+	  git -C $$root ls-files '*.har' | sed "s|^|$$root/|" \
+	  | xargs -r uv run python tools/har_guard.py

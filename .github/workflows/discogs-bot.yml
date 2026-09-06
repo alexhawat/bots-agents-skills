@@ -9,13 +9,14 @@ on:
   pull_request:
     paths: ['grok_bots/discogs-bot/**', '.github/workflows/discogs-bot.yml']
 
-defaults:
-  run:
-    working-directory: grok_bots/discogs-bot
-
 jobs:
   check:
     runs-on: ubuntu-latest
+    # Only this job runs inside the pack; `secrets` works from the repo root
+    # because it inspects tracked paths across the whole repository.
+    defaults:
+      run:
+        working-directory: grok_bots/discogs-bot
     strategy:
       fail-fast: false
       matrix:
@@ -51,31 +52,19 @@ jobs:
 
       - name: No live jar committed
         run: |
+          cd "$GITHUB_WORKSPACE"
           if git ls-files | grep -E '(^|/)(auth|personal)\.env$'; then
             echo "::error::a live auth.env/personal.env is committed"; exit 1
           fi
           echo "ok: no jar files tracked"
 
-      - name: Committed HARs carry no Cookie or Authorization value
+      - name: Committed HARs carry no live session material
         run: |
-          status=0
-          for h in $(git ls-files '*.har'); do
-            python3 - "$h" <<'PY' || status=1
-          import json, sys
-          path = sys.argv[1]
-          with open(path) as fh:
-              har = json.load(fh)
-          leaks = [
-              header["value"]
-              for entry in har["log"]["entries"]
-              for header in entry["request"]["headers"]
-              if header["name"].lower() in ("cookie", "authorization")
-              and header["value"] not in ("REDACTED", "PLACEHOLDER")
-          ]
-          if leaks:
-              print(f"::error file={path}::unredacted auth header in committed HAR")
-              raise SystemExit(1)
-          print(f"ok: {path}")
-          PY
-          done
-          exit $status
+          # Guard lives in the repo (tools/har_guard.py) so it is unit-tested
+          # rather than embedded here where nothing can exercise it.
+          # Anchored to GITHUB_WORKSPACE so the step cannot break if a
+          # working-directory default is ever introduced above it.
+          cd "$GITHUB_WORKSPACE"
+          hars=$(git ls-files '*.har')
+          if [ -z "$hars" ]; then echo "no committed HARs"; exit 0; fi
+          python3 "$GITHUB_WORKSPACE/grok_bots/discogs-bot/tools/har_guard.py" $hars

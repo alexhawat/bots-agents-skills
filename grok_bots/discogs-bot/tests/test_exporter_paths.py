@@ -143,6 +143,34 @@ def test_cdp_helper_honours_the_same_env_vars_as_python():
         assert var in src, f"CDP helper ignores {var}"
 
 
+def test_cdp_helper_declares_no_module_level_path_constants():
+    """Regression: `const OUT = outPath()` snapshotted the env at process start.
+
+    Behaviour is covered for real in test_cdp_helper.py (via node); this is the
+    cheap source-level guard that survives when node is unavailable.
+    """
+    from conftest import PACK_ROOT
+    src = (PACK_ROOT / "discogs-auth" / "export_from_display.mjs").read_text()
+    assert "const OUT = outPath()" not in src
+    assert "const WORK_DIR = process.env" not in src
+    assert "export function outPath()" in src
+    assert "export function workDir()" in src
+
+
+def test_cdp_helper_gates_its_cdp_body_behind_a_main_check():
+    """Regression: top-level `await connectBrowser(port)` ran CDP on import.
+
+    Importing the module to read a path must not open a browser session or
+    write the jar. Proven behaviourally in test_cdp_helper.py.
+    """
+    from conftest import PACK_ROOT
+    src = (PACK_ROOT / "discogs-auth" / "export_from_display.mjs").read_text()
+    assert "import.meta.url === pathToFileURL(process.argv[1]).href" in src
+    # the box-only modules must be imported lazily, inside main()
+    assert 'import { connectBrowser' not in src
+    assert 'await import(' in src
+
+
 def test_shipped_response_sample_is_synthetic():
     """The pack is public: no real collection inventory in committed fixtures."""
     from conftest import SCRIPTS_ROOT

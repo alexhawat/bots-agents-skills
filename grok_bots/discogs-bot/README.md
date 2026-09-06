@@ -21,7 +21,7 @@ The offline paths need no cookie, no network, and no Discogs account:
 
 ```bash
 make install   # uv sync --group dev
-make test      # 96 unit tests over the pure parsers
+make test      # 109 unit tests over the pure parsers
 make smoke     # replay the redacted HAR fixture + run har-diff
 make check     # lint + test; run this before committing
 ```
@@ -86,8 +86,11 @@ The exporters write the jar once, at mode 0600, and put only a **path pointer**
 checkout.
 
 CI enforces the last part: `.github/workflows/discogs-bot.yml` fails the build if a
-live `auth.env`/`personal.env` is committed, or if any committed HAR still carries a
-`Cookie`/`Authorization` value.
+live `auth.env`/`personal.env` is committed, or if any committed HAR still carries
+live session material. That check is `tools/har_guard.py` — a real script rather than
+inline YAML, so it is unit-tested. It inspects all four places HAR keeps credentials
+(request headers, `request.cookies[]`, response `Set-Cookie`, `response.cookies[]`)
+and treats an unparseable `.har` as suspect rather than clean.
 
 ## Mutation safety
 
@@ -102,6 +105,7 @@ exits **2**. Pass `--confirm` to execute. Adding to the cart needs `--confirm` *
 - `discogs-scripts/` — automation tree: `_lib/` + 27 task folders
 - `discogs-auth/` — cookie export helpers + `*.example` env files
 - `tests/` — offline unit tests (`make test`)
+- `tools/` — `har_guard.py`, the committed-HAR redaction check used by CI
 
 Each task folder is `<slug>/{scripts,capture,README.md}`: the script, the redacted
 capture that documents its endpoints, and how to run it.
