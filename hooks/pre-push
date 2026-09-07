@@ -1,0 +1,4 @@
+#!/bin/sh
+# Pre-push guard: block pushes carrying commits by untrusted authors.
+# Installed via `make install-hooks` (core.hooksPath → hooks/).
+exec python3 "$(git rev-parse --show-toplevel)/scripts/check_push_authors.py"

@@ -1,0 +1,154 @@
+# mergeCraft PR review — ADVISORY ONLY (https://github.com/alexhawat/mergeCraft).
+#
+# Auto-reviews PRs on open / ready / new commits, posting inline comments plus
+# a summary as github-actions[bot]. Nothing in this workflow gates merges: no
+# job is a required check, every review step is continue-on-error, and the
+# workflow skips gracefully when no provider secret is configured (forks).
+#
+# Trigger: pull_request_target (never pull_request — that would resolve the
+# workflow definition from the PR's own branch and hand provider secrets to
+# PR-controlled code). The same-repo guard below additionally keeps fork PRs
+# from receiving secrets.
+#
+# Action pin: the `uses:` ref MUST stay a full-length commit SHA.
+#
+# Auth (same-repo only — forks skip):
+# - NOUS_API_KEY — Nous Portal key — primary (Tencent HY3 via nous/tencent/hy3)
+# - CODEX_AUTH_JSON / OPENAI_API_KEY — Codex fallback when Nous is absent
+name: mergecraft
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: Prompt for the agent (workflow_dispatch only)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  MERGECRAFT_REVIEW_ATTEMPT_TIMEOUT_MINUTES: "25"
+
+concurrency:
+  # pull_request_target resolves github.ref to the default branch; key on the
+  # PR number so concurrent reviews do not cancel each other.
+  group: mergecraft-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: mergecraft review (advisory)
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.pull_request.draft == false &&
+        github.event.pull_request.head.repo.full_name == github.repository)) &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write        # mergecraft / mergecraft-approval check-runs
+      pull-requests: write # inline review comments
+    steps:
+      - name: Detect configured providers
+        id: creds
+        env:
+          NOUS: ${{ secrets.NOUS_API_KEY }}
+          CODEX: ${{ secrets.CODEX_AUTH_JSON }}
+          OPENAI: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          {
+            echo "nous=$([ -n "${NOUS}" ] && echo yes || echo no)"
+            echo "codex=$([ -n "${CODEX}${OPENAI}" ] && echo yes || echo no)"
+          } >> "${GITHUB_OUTPUT}"
+
+      # Fail-open wait so the reviewer can read real CI outcomes instead of
+      # guessing. Times out into reviewing without CI context, never blocks.
+      - name: Wait for CI checks on the PR head SHA
+        id: wait
+        if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          WAIT_BUDGET_SECONDS: "600"
+          APPEAR_BUDGET_SECONDS: "180"
+        run: |
+          set -uo pipefail
+          # All check-runs except this workflow's own (posted as "mergecraft*").
+          jq_sel='[.check_runs[]? | select(.name | startswith("mergecraft") | not)]'
+          started="$(date +%s)"
+          while :; do
+            elapsed=$(( $(date +%s) - started ))
+            if runs="$(gh api "/repos/${REPO}/commits/${HEAD_SHA}/check-runs?per_page=100")"; then
+              total="$(printf '%s' "${runs}" | jq "${jq_sel} | length")"
+              pending="$(printf '%s' "${runs}" | jq "${jq_sel} | map(select(.status != \"completed\")) | length")"
+              if [ "${total}" -gt 0 ] && [ "${pending}" -eq 0 ]; then
+                echo "CI complete on ${HEAD_SHA}"; break
+              fi
+              if [ "${total}" -eq 0 ] && [ "${elapsed}" -ge "${APPEAR_BUDGET_SECONDS}" ]; then
+                echo "no CI appeared — reviewing without it"; break
+              fi
+            fi
+            if [ "${elapsed}" -ge "${WAIT_BUDGET_SECONDS}" ]; then
+              echo "CI wait timed out — reviewing without it"; break
+            fi
+            sleep 10
+          done
+
+      - name: Review (Nous / Tencent HY3)
+        if: steps.creds.outputs.nous == 'yes'
+        continue-on-error: true # advisory — never blocks the PR
+        uses: alexhawat/mergeCraft@e3a0cc27f8212c7abe4060847d5810d2fba31f9d
+        with:
+          prompt: >-
+            Review this pull request. Post inline comments for concrete findings
+            and a summary verdict. This review is advisory: it informs the human
+            maintainer and is never a merge gate. The repository is a collection
+            of bot packs (grok_bots/ is canonical code; hermes/ and openclaw/
+            are instruction-only and must not contain .py/.mjs files). Hard
+            rules: no secrets in tracked files, library code raises typed errors
+            never SystemExit, mutating scripts are dry-run without --confirm.
+            ${{ github.event.inputs.prompt }}
+          timeout: ${{ env.MERGECRAFT_REVIEW_ATTEMPT_TIMEOUT_MINUTES }}m
+          model: nous/tencent/hy3
+          push: disabled
+          shell: disabled
+          status_checks: enabled
+          token: ${{ github.token }}
+        env:
+          MERGECRAFT_CUSTOM_PROVIDER_BASE_URL: https://inference-api.nousresearch.com/v1
+          MERGECRAFT_CUSTOM_PROVIDER_API_KEY: ${{ secrets.NOUS_API_KEY }}
+
+      - name: Review (Codex fallback)
+        if: steps.creds.outputs.nous == 'no' && steps.creds.outputs.codex == 'yes'
+        continue-on-error: true # advisory — never blocks the PR
+        uses: alexhawat/mergeCraft@e3a0cc27f8212c7abe4060847d5810d2fba31f9d
+        with:
+          prompt: >-
+            Review this pull request. Post inline comments for concrete findings
+            and a summary verdict. This review is advisory: it informs the human
+            maintainer and is never a merge gate. The repository is a collection
+            of bot packs (grok_bots/ is canonical code; hermes/ and openclaw/
+            are instruction-only and must not contain .py/.mjs files). Hard
+            rules: no secrets in tracked files, library code raises typed errors
+            never SystemExit, mutating scripts are dry-run without --confirm.
+            ${{ github.event.inputs.prompt }}
+          timeout: ${{ env.MERGECRAFT_REVIEW_ATTEMPT_TIMEOUT_MINUTES }}m
+          model: openai/gpt-terra
+          push: disabled
+          shell: disabled
+          status_checks: enabled
+          token: ${{ github.token }}
+        env:
+          CODEX_AUTH_JSON: ${{ secrets.CODEX_AUTH_JSON }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: No provider configured
+        if: steps.creds.outputs.nous == 'no' && steps.creds.outputs.codex == 'no'
+        run: echo "no mergeCraft provider secret set — skipping advisory review"

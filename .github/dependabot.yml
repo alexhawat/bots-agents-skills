@@ -1,0 +1,48 @@
+version: 2
+
+# Grouping policy (mirrors alexhawat/mergeCraft, 2026-08-19):
+# patch+minor batched into one PR per ecosystem; majors arrive alone (they are
+# the case that needs a human to read a changelog); security updates get their
+# own PR so the review reads as "this is a CVE", never batched.
+updates:
+  - package-ecosystem: uv
+    directory: /grok_bots/discogs-bot
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python-patch-minor:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [patch, minor]
+      python-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: uv
+    directory: /grok_bots/whatsapp-bot
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python-patch-minor:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [patch, minor]
+      python-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      github-actions-patch-minor:
+        applies-to: version-updates
+        patterns: ["*"]
+        update-types: [patch, minor]
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ["*"]
