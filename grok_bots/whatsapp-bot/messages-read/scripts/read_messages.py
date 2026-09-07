@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TASK = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from _lib.errors import cli_main  # noqa: E402
 from _lib.opaque import require_http_or_exit  # noqa: E402
 
 
@@ -19,7 +20,7 @@ def browser_procedure(chat: str, limit: int) -> None:
     print("# 1. Open https://web.whatsapp.com/ (linked session)")
     print(f"# 2. Find and open chat matching name/jid: {chat}")
     print(f"# 3. Scroll message pane to load ~{limit} recent messages")
-    print("# 4. For each message record: direction (in/out), timestamp text, body preview, message-id if in DOM")
+    print("# 4. Record per message: direction (in/out), timestamp, body preview, message-id")
     print("# 5. Do not invent HTTP/WS replay; no media download here (see media-download)")
 
 
@@ -49,4 +50,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    cli_main(main)

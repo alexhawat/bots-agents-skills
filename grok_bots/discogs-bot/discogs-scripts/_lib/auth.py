@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from _lib.envfile import merge_env, parse_env
 from _lib.errors import DiscogsAuthError
 
 DEFAULT_AUTH_DIR = Path("/home/box/discogs-auth")
@@ -34,17 +35,8 @@ def personal_path() -> Path:
     return Path(override) if override else auth_dir() / "personal.env"
 
 
-def _parse_env(path: Path) -> dict[str, str]:
-    out: dict[str, str] = {}
-    if not path.is_file():
-        return out
-    for line in path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        out[k.strip()] = v.strip().strip('"').strip("'")
-    return out
+# Kept for existing callers; the parser lives in _lib.envfile (shared file).
+_parse_env = parse_env
 
 
 def load_auth(task_root: Path | None = None, override: Path | None = None) -> dict[str, str]:
@@ -55,9 +47,7 @@ def load_auth(task_root: Path | None = None, override: Path | None = None) -> di
     if override is not None:
         ordered.append(Path(override))
 
-    merged: dict[str, str] = {}
-    for path in ordered:
-        merged.update(_parse_env(path))
+    merged = merge_env(*ordered)
 
     if not merged.get("COOKIE"):
         raise DiscogsAuthError(

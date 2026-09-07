@@ -20,10 +20,10 @@ def dry_run(chat: str) -> None:
 
 
 def browser_mark(chat: str) -> None:
-    print(f"# mode=browser --confirm — browserUse steps")
+    print("# mode=browser --confirm — browserUse steps")
     print("# 1. Open https://web.whatsapp.com/ (linked session)")
     print(f"# 2. Open chat matching: {chat}")
-    print("# 3. Ensure message pane is focused/visible so WA marks read (blue ticks / unread clear)")
+    print("# 3. Focus the message pane so WA marks read (blue ticks / unread clears)")
     print("# 4. Do not invent receipt API calls")
 
 

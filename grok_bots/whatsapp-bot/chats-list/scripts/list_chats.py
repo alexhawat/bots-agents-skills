@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TASK = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from _lib.errors import cli_main  # noqa: E402
 from _lib.opaque import require_http_or_exit  # noqa: E402
 
 
@@ -18,7 +19,7 @@ def browser_procedure() -> None:
     print("# mode=browser — browserUse procedure (no HTTP replay)")
     print("# 1. Open https://web.whatsapp.com/ (linked session; chat list visible)")
     print("# 2. Scroll the left chat sidebar to cover recent conversations")
-    print("# 3. For each visible row, record: display name, unread badge (if any), last message preview")
+    print("# 3. For each visible row, record: display name, unread badge, last message preview")
     print("# 4. Prefer DOM/accessibility tree; do not invent API calls")
     print("# 5. Output lines: name | unread | preview  (no secrets)")
 
@@ -57,4 +58,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    cli_main(main)

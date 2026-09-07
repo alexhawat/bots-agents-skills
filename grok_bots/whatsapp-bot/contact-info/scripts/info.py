@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[2]
 TASK = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from _lib.opaque import require_http_or_exit  # noqa: E402
 from _lib.cli import die  # noqa: E402
+from _lib.opaque import require_http_or_exit  # noqa: E402
 
 
 def browser_procedure(target: str) -> None:

@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import gzip
 import json
+import random
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -14,6 +16,9 @@ DEFAULT_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
 )
+
+# Cap on any single retry wait so a hostile Retry-After can't stall a run.
+MAX_RETRY_WAIT = 30.0
 
 
 def _build_headers(
@@ -43,6 +48,17 @@ def _build_headers(
     return out
 
 
+def _retry_wait(attempt: int, retry_after: str | None) -> float:
+    """Seconds to wait before retry ``attempt``: Retry-After if given and
+    numeric, else exponential backoff (1s, 2s, 4s, ...) with jitter. Capped."""
+    if retry_after:
+        try:
+            return min(float(retry_after), MAX_RETRY_WAIT)
+        except ValueError:
+            pass
+    return min(2.0**attempt + random.uniform(0, 0.5), MAX_RETRY_WAIT)
+
+
 def get_bytes(
     url: str,
     auth: dict[str, str],
@@ -50,20 +66,29 @@ def get_bytes(
     *,
     apollo: bool = False,
     timeout: int = 60,
+    retries: int = 3,
 ) -> bytes:
     req_headers = _build_headers(auth, headers, apollo=apollo)
-    req = urllib.request.Request(url, headers=req_headers, method="GET")
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = resp.read()
-            encoding = (resp.headers.get("Content-Encoding") or "").lower()
-            if encoding == "gzip" or data[:2] == b"\x1f\x8b":
-                data = gzip.decompress(data)
-            return data
-    except urllib.error.HTTPError as e:
-        body = e.read()[:800]
-        # Never include request Cookie in error text
-        raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
+    attempts = max(1, retries)
+    for attempt in range(attempts):
+        req = urllib.request.Request(url, headers=req_headers, method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = resp.read()
+                encoding = (resp.headers.get("Content-Encoding") or "").lower()
+                if encoding == "gzip" or data[:2] == b"\x1f\x8b":
+                    data = gzip.decompress(data)
+                return data
+        except urllib.error.HTTPError as e:
+            body = e.read()[:800]
+            retryable = e.code == 429 or e.code >= 500
+            if retryable and attempt < attempts - 1:
+                wait = _retry_wait(attempt, e.headers.get("Retry-After") if e.headers else None)
+                time.sleep(wait)
+                continue
+            # Never include request Cookie in error text
+            raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
+    raise DiscogsHTTPError(0, url.split('?', 1)[0], b"")  # pragma: no cover — unreachable
 
 
 def get_text(
@@ -73,8 +98,9 @@ def get_text(
     *,
     apollo: bool = False,
     timeout: int = 60,
+    retries: int = 3,
 ) -> str:
-    return get_bytes(url, auth, headers, apollo=apollo, timeout=timeout).decode(
+    return get_bytes(url, auth, headers, apollo=apollo, timeout=timeout, retries=retries).decode(
         "utf-8", errors="replace"
     )
 
@@ -86,11 +112,12 @@ def get_json(
     *,
     apollo: bool = False,
     timeout: int = 60,
+    retries: int = 3,
 ) -> Any:
     h = {"accept": "application/json"}
     if headers:
         h.update(headers)
-    text = get_text(url, auth, h, apollo=apollo, timeout=timeout)
+    text = get_text(url, auth, h, apollo=apollo, timeout=timeout, retries=retries)
     return json.loads(text)
 
 
@@ -111,7 +138,8 @@ def get_public_json(url: str, user_agent: str | None = None, timeout: int = 60) 
             return json.loads(data.decode("utf-8"))
     except urllib.error.HTTPError as e:
         body = e.read()[:800]
-        raise DiscogsHTTPError(e.code, url, body) from e
+        # Never include request Cookie in error text
+        raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
 
 
 def graphql_get(
@@ -123,6 +151,7 @@ def graphql_get(
     variables: dict[str, Any],
     headers: dict[str, str] | None = None,
     timeout: int = 60,
+    retries: int = 3,
 ) -> Any:
     """GET a Discogs persisted GraphQL query (Apollo). Never logs Cookie."""
     params = {
@@ -143,4 +172,4 @@ def graphql_get(
     }
     if headers:
         extra.update(headers)
-    return get_json(url, auth, extra, timeout=timeout)
+    return get_json(url, auth, extra, timeout=timeout, retries=retries)

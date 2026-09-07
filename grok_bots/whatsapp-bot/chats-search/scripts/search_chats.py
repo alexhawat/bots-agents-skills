@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TASK = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from _lib.errors import cli_main  # noqa: E402
 from _lib.opaque import require_http_or_exit  # noqa: E402
 
 
@@ -48,4 +49,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    cli_main(main)

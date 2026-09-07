@@ -1,0 +1,72 @@
+name: whatsapp-bot
+
+# The pack's checks are fully offline — no cookie, no network, no WhatsApp
+# session — so they run on every push and PR that touches it.
+on:
+  push:
+    branches: [main]
+    paths: ['grok_bots/whatsapp-bot/**', '.github/workflows/whatsapp-bot.yml']
+  pull_request:
+    paths: ['grok_bots/whatsapp-bot/**', '.github/workflows/whatsapp-bot.yml']
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Only this job runs inside the pack; `secrets` works from the repo root
+    # because it inspects tracked paths across the whole repository.
+    defaults:
+      run:
+        working-directory: grok_bots/whatsapp-bot
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor declared in pyproject; 3.13 catches deprecations early.
+        python-version: ['3.10', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Lint
+        run: uv run --python ${{ matrix.python-version }} --group dev ruff check .
+
+      - name: Test
+        run: uv run --python ${{ matrix.python-version }} --group dev pytest
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No live jar committed
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          if git ls-files | grep -E '(^|/)(auth|personal)\.env$'; then
+            echo "::error::a live auth.env/personal.env is committed"; exit 1
+          fi
+          echo "ok: no jar files tracked"
+
+      - name: Only pointer examples tracked under whatsapp _auth
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          tracked=$(git ls-files 'grok_bots/whatsapp-bot/_auth/' | grep -v '\.example$' || true)
+          if [ -n "$tracked" ]; then
+            echo "::error::non-example file tracked under whatsapp _auth:"
+            echo "$tracked"
+            exit 1
+          fi
+          echo "ok: only *_PATH.txt.example tracked"
+
+      - name: Committed HARs carry no live session material
+        run: |
+          # Guard lives in the discogs pack (tools/har_guard.py) so it is
+          # unit-tested rather than embedded here where nothing can exercise it.
+          # Anchored to GITHUB_WORKSPACE so the step cannot break if a
+          # working-directory default is ever introduced above it.
+          cd "$GITHUB_WORKSPACE"
+          hars=$(git ls-files '*.har')
+          if [ -z "$hars" ]; then echo "no committed HARs"; exit 0; fi
+          python3 "$GITHUB_WORKSPACE/grok_bots/discogs-bot/tools/har_guard.py" $hars
