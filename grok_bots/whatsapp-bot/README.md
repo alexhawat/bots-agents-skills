@@ -56,17 +56,19 @@ Never print cookie or token **values**. On death: re-run QR link → export → 
 
 ## Install on a Grok Bot box
 
-1. Import the WhatsApp-Bot **public template** in Grok Bot (persona + skill).
-2. Copy this pack onto the box:
+1. Import the WhatsApp-Bot **public template** in Grok Bot (persona + skill + memories). The card does **not** include the script tree.
+2. Copy this pack onto the box (matches the card `// install`):
 
 ```bash
 # from a clone of alexhawat/bots-agents-skills
 cp -a grok_bots/whatsapp-bot/. /workspace/whatsapp-scripts/
 ```
 
-3. QR-link WhatsApp Web in **that** bot's Chrome (`request_box_help`).
-4. Export the session into the local auth jar (see `docs/qr-link.md` / `auth-export`).
-5. `python3 /workspace/whatsapp-scripts/auth-check/scripts/check.py`
+3. Auth jar lives at `/home/box/whatsapp-auth/` (examples + exporters; **never** ship live `auth.env`).
+4. QR-link WhatsApp Web in **that** bot's Chrome (`request_box_help` — see `docs/qr-link.md`).
+5. `python3 /home/box/whatsapp-auth/export_cookies.py`
+6. `python3 /workspace/whatsapp-scripts/auth-check/scripts/check.py`
+7. From the pack examples: `cp _auth/AUTH_PATH.txt.example _auth/AUTH_PATH.txt` (and `PERSONAL_PATH` the same way) so loaders point at the jar.
 
 ## Running scripts
 
@@ -111,6 +113,7 @@ real path pointers stay gitignored. See [`EXPORT.md`](EXPORT.md).
 
 | Doc | Purpose |
 | --- | --- |
+| [`PERSONA.md`](PERSONA.md) | Scrubbed storefront + charter (public template)
 | [`EXPORT.md`](EXPORT.md) | What is safe to publish vs must stay private |
 | [`PLAN.md`](PLAN.md) | Product plan + public track |
 | [`AUTOMATION-BACKLOG.md`](AUTOMATION-BACKLOG.md) | Wave status |
@@ -118,6 +121,7 @@ real path pointers stay gitignored. See [`EXPORT.md`](EXPORT.md).
 | [`docs/qr-link.md`](docs/qr-link.md) | QR link + cookie export runbook |
 | [`docs/headless-chrome.md`](docs/headless-chrome.md) | Headless CDP (`--mode=headless`) |
 | [`docs/browser-path.md`](docs/browser-path.md) | browserUse fallback when HTTP is opaque |
+| [`docs/whatsapp-capture-to-script.SKILL.md`](docs/whatsapp-capture-to-script.SKILL.md) | Capture→script skill prose |
 
 ## Slug inventory
 

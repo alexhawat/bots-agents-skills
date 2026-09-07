@@ -1,8 +1,8 @@
 # Export / public surface (WhatsApp-Bot)
 
 ## Safe to publish (GitHub + Grok Bot template)
-- Scrubbed persona (no phone, no names, no cookies)
-- Skill: `whatsapp-capture-to-script` procedure (when published)
+- Scrubbed `PERSONA.md` (no phone, no names, no cookies; CI forbids substring `alex` in PERSONA)
+- Skill prose: `docs/whatsapp-capture-to-script.SKILL.md` (+ published skill when shared)
 - Script **shapes** under this pack (`grok_bots/whatsapp-bot/`): README, PLAN, AUTOMATION-BACKLOG, EXPORT.md
 - `_lib/` loaders + headless CDP helpers (paths only; no session dumps)
 - `_auth/AUTH_PATH.txt.example` / `PERSONAL_PATH.txt.example`
@@ -53,6 +53,14 @@ tools/capture_network.mjs
 ```
 
 Public Grok Bot template = scrubbed CreateAgent description + skill pointer + "bring your own QR session".
+
+
+## Public template card vs this pack
+The Grok Bot **public template card** ships scrubbed **persona + skill + memories only**.
+The script tree, `_lib/`, docs, and exporters-as-documented live in this pack
+(`grok_bots/whatsapp-bot/`). After the card is published, record the `x.ai` share
+URL in WhatsApp-Bot memory (and optionally append it under `// install` in
+`PERSONA.md` the same way Discogs does).
 
 ## Pre-push checklist
 - [ ] `rg` audit for personal chat names / cookie values → zero hits
