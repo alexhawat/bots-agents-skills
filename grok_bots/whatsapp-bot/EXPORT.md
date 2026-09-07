@@ -68,3 +68,9 @@ URL in WhatsApp-Bot memory (and optionally append it under `// install` in
 - [ ] Only `*_PATH.txt.example` under `_auth/`
 - [ ] README installable by strangers (no personal names)
 - [ ] Auth jar remains outside the repo
+
+## Completeness receipt (2026-09-07)
+
+| Slug | SoT | Replay | Notes |
+| --- | --- | --- | --- |
+| `chats-list` | `headless_live` / `opaque_ws` | PASS (`--mode=headless --limit 5`) | HTTP still `TRAFFIC_OPAQUE`; see `chats-list/capture/SOURCE.md` |
