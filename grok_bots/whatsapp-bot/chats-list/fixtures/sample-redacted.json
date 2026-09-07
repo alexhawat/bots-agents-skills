@@ -1,0 +1,65 @@
+{
+  "count": 10,
+  "chats": [
+    {
+      "title": "Chat1",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "03:04"
+    },
+    {
+      "title": "Chat2",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "02:41"
+    },
+    {
+      "title": "Chat3",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "02:08"
+    },
+    {
+      "title": "Chat4",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "01:50"
+    },
+    {
+      "title": "Chat5",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "01:49"
+    },
+    {
+      "title": "Chat6",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "01:20"
+    },
+    {
+      "title": "Chat7",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "00:27"
+    },
+    {
+      "title": "Chat8",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "Yesterday"
+    },
+    {
+      "title": "Chat9",
+      "unread_badge": "1",
+      "preview": "(redacted)",
+      "time": "Yesterday"
+    },
+    {
+      "title": "Chat10",
+      "unread_badge": null,
+      "preview": "(redacted)",
+      "time": "Saturday"
+    }
+  ]
+}

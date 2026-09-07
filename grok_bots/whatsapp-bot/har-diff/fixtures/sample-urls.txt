@@ -1,0 +1,3 @@
+# sample URL list for har-diff self-test (no cookies)
+https://web.whatsapp.com/
+https://web.whatsapp.com/sw.js

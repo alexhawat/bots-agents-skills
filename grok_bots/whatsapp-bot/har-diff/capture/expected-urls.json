@@ -1,0 +1,7 @@
+{
+  "status": "opaque_ws",
+  "captured_at": "2026-09-07T10:24:20Z",
+  "source": "/workspace/whatsapp-scripts/out/wa-network-summary.md",
+  "note": "Empty \u2014 real CDP capture found zero HTTP endpoints (opaque WS/protobuf). Do not invent URLs.",
+  "urls": []
+}

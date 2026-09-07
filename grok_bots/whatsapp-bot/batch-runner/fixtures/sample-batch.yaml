@@ -1,0 +1,6 @@
+name: smoke-readonly
+jobs:
+  - slug: auth-check
+    args: ["--no-probe"]
+  - slug: chats-list
+    args: ["--mode=browser"]

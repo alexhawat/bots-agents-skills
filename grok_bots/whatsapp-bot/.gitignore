@@ -1,0 +1,10 @@
+auth.env
+personal.env
+*.pem
+secrets/
+out/
+_auth/AUTH_PATH.txt
+_auth/PERSONAL_PATH.txt
+**/__pycache__/
+*.pyc
+.DS_Store

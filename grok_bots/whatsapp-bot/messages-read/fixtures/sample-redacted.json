@@ -1,0 +1,26 @@
+{
+  "chat": "Note-to-self",
+  "count": 4,
+  "messages": [
+    {
+      "direction": "out",
+      "text": "(redacted)",
+      "time": "23:21"
+    },
+    {
+      "direction": "out",
+      "text": "(redacted)",
+      "time": "21:45"
+    },
+    {
+      "direction": "out",
+      "text": "(redacted)",
+      "time": "02:44"
+    },
+    {
+      "direction": "out",
+      "text": "(redacted)",
+      "time": "01:20"
+    }
+  ]
+}
