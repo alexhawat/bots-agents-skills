@@ -1,20 +1,31 @@
-# whatsapp-scripts
+# WhatsApp-Bot (public pack)
 
-Session-backed automations for **WhatsApp Web**. Link once with QR, then run read/write scripts via headless CDP or browser UI automation.
+Session-backed automations for **WhatsApp Web**. Link once with QR, then run
+read/write scripts via headless CDP or browser UI automation. Slug folders over a
+shared `_lib/`, plus auth-path examples (secrets stay on your machine).
 
-This repo is the **public** script shapes + docs. Secrets stay on your machine only.
+**Repo:** https://github.com/alexhawat/bots-agents-skills
+**Path:** `grok_bots/whatsapp-bot/`
+**License:** MIT (repo root)
 
-## Quick start
+This folder is the **public** script shapes + docs. Never commit live cookies,
+`auth.env`, chat transcripts, or unredacted captures.
 
-### 1. Install
+## Requirements
+
+- **Python 3.10+** (stdlib preferred for task scripts)
+- **Node 20+** for headless CDP helpers (`_lib/*.mjs`, `tools/capture_network.mjs`)
+- A linked WhatsApp Web session (QR once; jar stays local)
+
+## Quick start (from this monorepo)
 
 ```bash
-git clone https://github.com/alexhawat/whatsapp-scripts.git
-cd whatsapp-scripts
+git clone https://github.com/alexhawat/bots-agents-skills.git
+cd bots-agents-skills/grok_bots/whatsapp-bot
 # Python 3.10+ and Node 20+ recommended
 ```
 
-### 2. Auth jar (local only — never commit)
+### Auth jar (local only — never commit)
 
 Create a local auth directory from the examples (see [`docs/auth-setup.md`](docs/auth-setup.md)):
 
@@ -27,11 +38,13 @@ cp _auth/PERSONAL_PATH.txt.example _auth/PERSONAL_PATH.txt
 # edit the PATH files if your auth dir is elsewhere
 ```
 
-### 3. Link WhatsApp Web once (QR)
+### Link WhatsApp Web once (QR)
 
-Follow [`docs/qr-link.md`](docs/qr-link.md): open `https://web.whatsapp.com/`, scan the QR (`request_box_help` on a Grok Bot box), wait until the chat list is visible, then export cookies into `auth.env`.
+Follow [`docs/qr-link.md`](docs/qr-link.md): open `https://web.whatsapp.com/`, scan
+the QR (`request_box_help` on a Grok Bot box), wait until the chat list is visible,
+then export cookies into `auth.env`.
 
-### 4. Auth check
+### Auth check
 
 ```bash
 python3 auth-check/scripts/check.py
@@ -41,9 +54,24 @@ python3 -c 'from _lib.auth import load; print(sorted(load().keys()))'
 
 Never print cookie or token **values**. On death: re-run QR link → export → re-check.
 
+## Install on a Grok Bot box
+
+1. Import the WhatsApp-Bot **public template** in Grok Bot (persona + skill).
+2. Copy this pack onto the box:
+
+```bash
+# from a clone of alexhawat/bots-agents-skills
+cp -a grok_bots/whatsapp-bot/. /workspace/whatsapp-scripts/
+```
+
+3. QR-link WhatsApp Web in **that** bot's Chrome (`request_box_help`).
+4. Export the session into the local auth jar (see `docs/qr-link.md` / `auth-export`).
+5. `python3 /workspace/whatsapp-scripts/auth-check/scripts/check.py`
+
 ## Running scripts
 
-WhatsApp Web traffic is largely **opaque** (WebSocket / protobuf). Do **not** invent private HTTP APIs. Prefer:
+WhatsApp Web traffic is largely **opaque** (WebSocket / protobuf). Do **not** invent
+private HTTP APIs. Prefer:
 
 | Mode | Flag | When |
 | --- | --- | --- |
@@ -72,6 +100,12 @@ Or call the Node runner directly (see [`docs/headless-chrome.md`](docs/headless-
 - Mutating scripts require **`--confirm`**. Without it they dry-run.
 - No mass messaging or spam tooling.
 - No secrets in git, chat, or logs.
+
+## Never commit / never ship
+
+Live `auth.env`, `personal.env`, cookies, localStorage dumps, chat transcripts,
+media, phone numbers, or unredacted HARs. Only `_auth/*_PATH.txt.example` ships;
+real path pointers stay gitignored. See [`EXPORT.md`](EXPORT.md).
 
 ## Docs
 
@@ -103,11 +137,12 @@ Or call the Node runner directly (see [`docs/headless-chrome.md`](docs/headless-
 | 4 | `batch-runner` | tool | read-only YAML/JSON batches |
 | H | `_lib/*headless*` | lib | CDP DOM runner — see headless-chrome.md |
 
-Layout per slug: `README.md`, `capture/SOURCE.md`, `capture/endpoints.json`, `scripts/<name>.py` (runbooks may omit scripts).
+Layout per slug: `README.md`, `capture/SOURCE.md`, `capture/endpoints.json`,
+`scripts/<name>.py` (runbooks may omit scripts).
 
 ## Hard rules
 
 - Never invent WhatsApp private API endpoints.
 - Mutating scripts require `--confirm`.
 - No mass messaging / spam tooling.
-- Secrets stay in your local auth directory only (never in this repo).
+- Secrets stay in your local auth directory only (never in this pack).

@@ -30,4 +30,4 @@ Cookie **names** in docs (documentation only) are OK.
 ## Audit result
 
 Personal-content / cookie-value checklist: **zero hits** (2026-09-07).
-GitHub: https://github.com/alexhawat/whatsapp-scripts (public).
+GitHub: https://github.com/alexhawat/bots-agents-skills/tree/main/grok_bots/whatsapp-bot (public monorepo path).

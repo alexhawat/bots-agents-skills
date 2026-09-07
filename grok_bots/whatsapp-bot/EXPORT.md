@@ -3,7 +3,7 @@
 ## Safe to publish (GitHub + Grok Bot template)
 - Scrubbed persona (no phone, no names, no cookies)
 - Skill: `whatsapp-capture-to-script` procedure (when published)
-- `/workspace/whatsapp-scripts/` script **shapes**, README, PLAN, AUTOMATION-BACKLOG, EXPORT.md
+- Script **shapes** under this pack (`grok_bots/whatsapp-bot/`): README, PLAN, AUTOMATION-BACKLOG, EXPORT.md
 - `_lib/` loaders + headless CDP helpers (paths only; no session dumps)
 - `_auth/AUTH_PATH.txt.example` / `PERSONAL_PATH.txt.example`
 - Redacted fixtures only (`*-redacted.json`, sample batch YAML/JSON with fake names)
@@ -29,11 +29,15 @@
 | Real HTTP replay endpoints | **Not ready** | Capture empty (`opaque_ws`); do not invent |
 
 ## Public pack path
-Clean mirror (for push): `/workspace/whatsapp-scripts-public/`  
-(Live working tree remains `/workspace/whatsapp-scripts/` with `out/` gitignored.)
+Canonical public pack: `grok_bots/whatsapp-bot/` in
+[`alexhawat/bots-agents-skills`](https://github.com/alexhawat/bots-agents-skills)
+(**public** monorepo).
+
+Box working tree (gitignored live samples): `/workspace/whatsapp-scripts/`  
+Clean export mirror used for the first push: `/workspace/whatsapp-scripts-public/`
 
 ## Intended GitHub layout
-`github.com/alexhawat/whatsapp-scripts` (**public**):
+`github.com/alexhawat/bots-agents-skills` → `grok_bots/whatsapp-bot/` (**public**):
 ```
 README.md
 EXPORT.md

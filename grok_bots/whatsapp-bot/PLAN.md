@@ -47,7 +47,7 @@ Rule: **do not invent endpoints** — only captured URLs/frames or explicit docu
 2. [x] Grow `whatsapp-scripts` like `discogs-scripts`; `EXPORT.md` is the share checklist.
 3. [x] README installable by strangers; wave 0+1 scripts + headless Live.
 4. [x] Export pack at `/workspace/whatsapp-scripts-public/` (rsync mirror; audit before push).
-5. [ ] Open GitHub repo `alexhawat/whatsapp-scripts` (**public**) — push from export pack.
+5. [x] Land public pack in `alexhawat/bots-agents-skills` at `grok_bots/whatsapp-bot/`.
 6. [ ] Grok Bot **Share as template** after secrets audit (same bar as Discogs-Bot export).
 7. [ ] Version scripts + bot with `/workspace/bot-versions` (`// version` minors per wave).
 8. Path B (alternate HTTP / unofficial API claims): **on ice** — do not invent endpoints; revisit only after a real capture proves HTTP.
@@ -63,7 +63,7 @@ Rule: **do not invent endpoints** — only captured URLs/frames or explicit docu
 - [x] Headless CDP Live (`docs/headless-chrome.md`, `--mode=headless`)
 - [x] Public export pack prepared (`/workspace/whatsapp-scripts-public/`)
 - [ ] First read script with **real HTTP endpoints** — still N/A; only when a future capture proves HTTP (do not invent)
-- [x] Public GitHub repo live — https://github.com/alexhawat/whatsapp-scripts
+- [x] Public pack live — https://github.com/alexhawat/bots-agents-skills/tree/main/grok_bots/whatsapp-bot
 
 ## Anti-goals
 - No unofficial "WhatsApp Business API" claims without Meta credentials
