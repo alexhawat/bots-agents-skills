@@ -1,0 +1,7 @@
+# Every path requires review from the owner before merge.
+# The "protect-main" ruleset enforces code-owner review on the default branch.
+#
+# Owners MUST stay on one line: CODEOWNERS resolves each file to only its LAST
+# matching pattern, so two separate `*` lines silently drop every owner but the
+# last one.
+* @alexhawat

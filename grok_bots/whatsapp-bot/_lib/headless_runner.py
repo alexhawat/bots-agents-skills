@@ -8,14 +8,18 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from _lib.errors import HeadlessRunnerError
+
 ROOT = Path(__file__).resolve().parents[1]
 RUNNER = ROOT / "_lib" / "run_headless.mjs"
 
 
-def run_headless(command: str, args: dict[str, Any] | None = None, extra: list[str] | None = None) -> dict[str, Any]:
+def run_headless(
+    command: str, args: dict[str, Any] | None = None, extra: list[str] | None = None
+) -> dict[str, Any]:
     """
     Run NODE_OPTIONS=--experimental-websocket node run_headless.mjs <command> --json-args '...'.
-    Returns parsed JSON. Raises SystemExit with runner exit code on failure.
+    Returns parsed JSON. Raises HeadlessRunnerError with the runner exit code on failure.
     """
     env = os.environ.copy()
     opts = env.get("NODE_OPTIONS", "")
@@ -23,6 +27,7 @@ def run_headless(command: str, args: dict[str, Any] | None = None, extra: list[s
         env["NODE_OPTIONS"] = (opts + " --experimental-websocket").strip()
     if "DISPLAY" not in env:
         env["DISPLAY"] = ":30"
+        print("# DISPLAY unset — falling back to :30 (box headless X)", file=sys.stderr)
 
     cmd = ["node", str(RUNNER), command, "--json-args", json.dumps(args or {})]
     if extra:
@@ -49,6 +54,5 @@ def run_headless(command: str, args: dict[str, Any] | None = None, extra: list[s
         except json.JSONDecodeError:
             data = {"ok": False, "error": "non-json stdout", "raw_len": len(stdout)}
     if proc.returncode != 0:
-        print(json.dumps(data), flush=True)
-        raise SystemExit(proc.returncode)
+        raise HeadlessRunnerError(proc.returncode, data)
     return data

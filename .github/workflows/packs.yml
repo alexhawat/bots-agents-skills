@@ -1,0 +1,35 @@
+name: packs
+
+# The hermes/ and openclaw/ packs are instructions only. The drift guard fails
+# the build if executable code (.py/.mjs/.cjs) is ever committed there —
+# scripts must be referenced from grok_bots/, never copied.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'hermes/**'
+      - 'openclaw/**'
+      - 'grok_bots/*/PERSONA.md'
+      - 'tools/pack_drift_guard.py'
+      - 'tools/persona_version_check.py'
+      - '.github/workflows/packs.yml'
+  pull_request:
+    paths:
+      - 'hermes/**'
+      - 'openclaw/**'
+      - 'grok_bots/*/PERSONA.md'
+      - 'tools/pack_drift_guard.py'
+      - 'tools/persona_version_check.py'
+      - '.github/workflows/packs.yml'
+
+jobs:
+  drift-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packs carry no executable code
+        run: python3 tools/pack_drift_guard.py
+
+      - name: Persona versions stay in sync across infra
+        run: python3 tools/persona_version_check.py

@@ -1,0 +1,31 @@
+[project]
+name = "whatsapp-bot"
+version = "1.0.0"
+description = "WhatsApp Web automation pack: opaque-first, headless CDP runner."
+readme = "README.md"
+requires-python = ">=3.10"
+
+# The automation scripts are standard-library only; Node runs the CDP runner.
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Task scripts import `_lib` straight from the pack root.
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["*/capture", "*/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E402: task scripts must insert the pack root on sys.path before importing _lib.
+ignore = ["E402"]

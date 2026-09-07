@@ -1,0 +1,18 @@
+# Emails allowed to author or commit code pushed to this repository.
+#
+# Gates scripts/check_push_authors.py, the client-side pre-push guard: it
+# refuses to push a branch carrying a commit whose author or committer email
+# is not listed here. This catches a fork PR checked out onto a local branch
+# and pushed to origin — client-side, before the branch ever reaches origin.
+#
+# One email per line. Comparison is case-insensitive. Lines starting with
+# `#` are comments. BOTS_TRUSTED_AUTHORS (comma-separated) overrides this
+# file entirely when set.
+
+alexhawat@gmail.com
+alexhawat@users.noreply.github.com
+noreply@github.com
+noreply@anthropic.com
+whatsapp-bot@users.noreply.github.com
+223556219+Copilot@users.noreply.github.com
+49699333+dependabot[bot]@users.noreply.github.com
