@@ -9,6 +9,11 @@ Wave 1 — list recent chats (name, unread, last preview).
 | `headless` | CDP DOM via agent's linked Chrome — real JSON chats (see `docs/headless-chrome.md`) |
 | `http` | Exit **2** `TRAFFIC_OPAQUE` unless `capture/endpoints.json` has real captured URLs |
 
+## Source of truth (SoT)
+- headless_live = Live
+- opaque_ws = HTTP empty
+- http_replay = blocked until real endpoints
+
 ## CLI
 ```bash
 cd /workspace/whatsapp-scripts
