@@ -90,3 +90,7 @@ Scrubbed persona + this skill procedure + script shapes. Never `auth.env`,
 `personal.env`, HARs with tokens, or phone numbers from live chats. The Grok Bot
 public template card ships persona + skill + memories only; the script tree is
 this pack under `grok_bots/whatsapp-bot/`.
+
+## SoT (2026-09-07)
+
+Prefer `http_replay` when capture yields real endpoints. While traffic is WS/protobuf (`opaque_ws`), ship `headless_live` / browserUse Live and document it per slug. Serialize one slug at a time. On auth death: open WhatsApp Web and `request_box_help` immediately — never ask “can you scan?”.
