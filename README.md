@@ -55,6 +55,13 @@ README has the exact steps.
 - Never commit live `auth.env` / `personal.env`, cookies, unredacted HARs, chat
   transcripts, or phone numbers.
 
+
+## Skills (external)
+
+| Skill | Repo |
+|-------|------|
+| **Bullshit Score (`bs_score`)** | [`alexhawat/bs_score`](https://github.com/alexhawat/bs_score) — portable eval skill; LLM finds defects, `score.py` scores them (MIT). |
+
 ## License
 
 MIT (unless a subdirectory says otherwise).
