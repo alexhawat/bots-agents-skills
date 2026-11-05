@@ -10,15 +10,49 @@ import urllib.parse
 import urllib.request
 from typing import Any
 
-from _lib.errors import DiscogsHTTPError
+from _lib.errors import DiscogsHTTPError, PersistedQueryRotated
 
 DEFAULT_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+    "(KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
 )
 
 # Cap on any single retry wait so a hostile Retry-After can't stall a run.
 MAX_RETRY_WAIT = 30.0
+
+_ROTATION_MARKERS = ("Unsupported query ID", "PersistedQueryNotFound")
+
+
+def body_indicates_persisted_query_rotated(body: bytes | str) -> bool:
+    """True when Discogs is rejecting the persisted-query hash, not the jar."""
+    if isinstance(body, (bytes, bytearray)):
+        text = bytes(body).decode("utf-8", errors="replace")
+    else:
+        text = str(body)
+    return any(marker in text for marker in _ROTATION_MARKERS)
+
+
+def _operation_name_from_url(url: str) -> str | None:
+    if "?" not in url:
+        return None
+    qs = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
+    vals = qs.get("operationName") or []
+    return vals[0] if vals else None
+
+
+def raise_if_persisted_query_rotated(
+    status: int,
+    url: str,
+    body: bytes | str,
+    *,
+    operation_name: str | None = None,
+) -> None:
+    """Raise ``PersistedQueryRotated`` when the body shows a stale query hash."""
+    if not body_indicates_persisted_query_rotated(body):
+        return
+    op = operation_name or _operation_name_from_url(url)
+    raise PersistedQueryRotated(op, status=status, body=body)
+
 
 
 def _build_headers(
@@ -87,6 +121,7 @@ def get_bytes(
                 time.sleep(wait)
                 continue
             # Never include request Cookie in error text
+            raise_if_persisted_query_rotated(e.code, url, body)
             raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
     raise DiscogsHTTPError(0, url.split('?', 1)[0], b"")  # pragma: no cover — unreachable
 
@@ -139,6 +174,7 @@ def get_public_json(url: str, user_agent: str | None = None, timeout: int = 60) 
     except urllib.error.HTTPError as e:
         body = e.read()[:800]
         # Never include request Cookie in error text
+        raise_if_persisted_query_rotated(e.code, url, body)
         raise DiscogsHTTPError(e.code, url.split('?', 1)[0], body) from e
 
 
@@ -172,4 +208,17 @@ def graphql_get(
     }
     if headers:
         extra.update(headers)
-    return get_json(url, auth, extra, timeout=timeout, retries=retries)
+    try:
+        data = get_json(url, auth, extra, timeout=timeout, retries=retries)
+    except PersistedQueryRotated as e:
+        if e.operation_name is None:
+            raise PersistedQueryRotated(
+                operation_name, status=e.status, body=e.body
+            ) from e
+        raise
+    # 200 OK can still carry Apollo PersistedQueryNotFound in `errors`.
+    if isinstance(data, dict) and data.get("errors"):
+        raise_if_persisted_query_rotated(
+            200, url, json.dumps(data["errors"]), operation_name=operation_name
+        )
+    return data

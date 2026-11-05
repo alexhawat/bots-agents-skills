@@ -7,7 +7,7 @@ Wave 2 — dump signed-in Discogs collection to CSV + JSON.
 `GET https://www.discogs.com/service/catalog/api/graphql`
 
 - `operationName=ViewerCollectionListData`
-- sha256Hash=`ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b`
+- sha256Hash=`91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9`
 - variables: `page`, `perPage` (50), `currency=EUR`, `folderId` (0=all), `direction=DESC`, `field=ADDED`, `search` (empty = full dump)
 
 Capture source: `../collection-search/capture/` (see `capture/SOURCE.md`). Shared paginator: `_lib/collection_fetch.py`.

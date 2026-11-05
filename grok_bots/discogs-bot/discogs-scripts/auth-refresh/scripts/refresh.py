@@ -20,13 +20,14 @@ from _lib.errors import (  # noqa: E402
     DiscogsAuthError,
     DiscogsError,
     DiscogsHTTPError,
+    PersistedQueryRotated,
     cli_main,
 )
 from _lib.http import graphql_get  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 GRAPHQL = "https://www.discogs.com/service/catalog/api/graphql"
-LIST_SHA = "ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b"
+LIST_SHA = "91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9"
 EXPORT_COOKIES = Path("/home/box/discogs-auth/export_cookies.py")
 
 SEMI_MANUAL = """\
@@ -61,8 +62,11 @@ def check_viewer(auth: dict[str, str]) -> tuple[str | None, str | None]:
             sha256_hash=LIST_SHA,
             variables=variables,
         )
+    except PersistedQueryRotated:
+        # Stale persisted-query hash — jar may be fine; do not treat as session dead.
+        raise
     except DiscogsHTTPError as e:
-        # 401/403 both mean "this jar is no longer accepted" for refresh purposes.
+        # Plain 401/403 (no rotation markers) mean the jar is no longer accepted.
         if e.status in (401, 403):
             return "http401", None
         raise
@@ -121,7 +125,12 @@ def main() -> int:
             print("# export_cookies failed; will still re-check existing auth.env", file=sys.stderr)
 
     auth = load_auth(task_root=TASK)
-    status, identity = check_viewer(auth)
+    try:
+        status, identity = check_viewer(auth)
+    except PersistedQueryRotated as e:
+        op = e.operation_name or "ViewerCollectionListData"
+        print(f"hash rotated op={op} (not a session problem)", file=sys.stderr)
+        return 1
 
     if status == "ok":
         # Prefer USERNAME from auth.env when GraphQL viewer has only discogsId
@@ -139,7 +148,12 @@ def main() -> int:
         print(f"# viewer status={status}; trying export_cookies.py", file=sys.stderr)
         run_export()
         auth = load_auth(task_root=TASK)
-        status, identity = check_viewer(auth)
+        try:
+            status, identity = check_viewer(auth)
+        except PersistedQueryRotated as e:
+            op = e.operation_name or "ViewerCollectionListData"
+            print(f"hash rotated op={op} (not a session problem)", file=sys.stderr)
+            return 1
         if status == "ok":
             if identity.isdigit() and auth.get("USERNAME"):
                 identity = auth["USERNAME"]
@@ -149,7 +163,12 @@ def main() -> int:
     # force-export path already exported once; re-check after that export
     if args.force_export:
         auth = load_auth(task_root=TASK)
-        status, identity = check_viewer(auth)
+        try:
+            status, identity = check_viewer(auth)
+        except PersistedQueryRotated as e:
+            op = e.operation_name or "ViewerCollectionListData"
+            print(f"hash rotated op={op} (not a session problem)", file=sys.stderr)
+            return 1
         if status == "ok":
             if identity.isdigit() and auth.get("USERNAME"):
                 identity = auth["USERNAME"]

@@ -8,6 +8,7 @@ from _lib.errors import (
     DiscogsAuthError,
     DiscogsError,
     DiscogsHTTPError,
+    PersistedQueryRotated,
     cli_main,
 )
 
@@ -17,6 +18,7 @@ def test_hierarchy_allows_catching_everything_with_one_base():
         DiscogsAuthError("x"),
         DiscogsAPIError("x"),
         DiscogsHTTPError(500, "u"),
+        PersistedQueryRotated("Op"),
         ConfirmationRequired("x"),
     ):
         assert isinstance(exc, DiscogsError)

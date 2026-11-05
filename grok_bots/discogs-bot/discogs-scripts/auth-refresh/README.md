@@ -6,7 +6,7 @@ Wave 5 — check signed-in Discogs session (`viewer`) and optionally re-export C
 
 | Op | sha256 | vars |
 |----|--------|------|
-| `ViewerCollectionListData` | `ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b` | `page=1 perPage=1 currency=EUR folderId=0` (minimal ping) |
+| `ViewerCollectionListData` | `91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9` | `page=1 perPage=1 currency=EUR folderId=0` (minimal ping) |
 
 Same hash as whoami / collection-search. See `capture/SOURCE.md`.
 
