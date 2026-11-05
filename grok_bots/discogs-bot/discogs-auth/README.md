@@ -12,7 +12,7 @@ Paths below are the box defaults. `DISCOGS_AUTH_DIR` / `DISCOGS_AUTH_ENV` /
 3. When the signed-in user nav is visible, refresh this jar — prefer `auth-refresh` which auto-runs `export_cookies.py`.
 
 ## Export order (`export_cookies.py`)
-1. **This-display live CDP** — `export_from_display.mjs` (`node --experimental-websocket`): `DISPLAY=:N` → CDP port `9222+N`, `Storage.getCookies`, filter `discogs`, require `session` or `sid`. Writes `auth.env` (0600). Prefer this; the shared box seed can be stale across Chromes.
+1. **This-display live CDP** — `export_from_display.mjs` (`node --experimental-websocket`) imports host helpers at `/opt/sand/sand-host/box-scripts/{cdp-cookies,box-contract.generated}.mjs` (also under `/usr/local/bin/`; `/home/box/sand-host/` is gone post box-image move). `DISPLAY=:N` → CDP port `9222+N`, `Storage.getCookies`, filter `discogs`, require `session` or `sid`. Writes `auth.env` (0600). Prefer this; the shared box seed can be stale across Chromes.
 2. **Seed fallback** — `/home/box/agent-data/chrome-cookie-seed.json` (same inode as sand-data seed; filled by sand-cookie-persist ~5s).
 3. **SQLite decrypt** — best-effort on `chrome-profile*/Default/Cookies` (usually fails on this box: no `os_crypt` key / keyring).
 

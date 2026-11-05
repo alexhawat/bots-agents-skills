@@ -7,8 +7,8 @@ Wave 3 — signed-in identity, folder counts, optional collection value snapshot
 | Op | sha256 | vars |
 |----|--------|------|
 | `UserCollectionPageData` | `4ec9e7cf…1cd96` | `{username}` |
-| `ViewerCollectionListData` | `ebc71d10…835f1b` | page/perPage/folderId/search… |
-| `ViewerCollectionPageData` | `462fbd5e…4a2b7` | `{currency, search}` (search `""` for full-collection stats) |
+| `ViewerCollectionListData` | `91302e22…0dda9` | page/perPage/folderId/search… |
+| `ViewerCollectionPageData` | `462fbd5e…4a2b7` | `{currency}` (HAR 2026-11-05; was `{currency, search}`) |
 
 Captured 2026-09-05 in `collection-search/capture/collection-federico.har`. See `capture/SOURCE.md`.
 

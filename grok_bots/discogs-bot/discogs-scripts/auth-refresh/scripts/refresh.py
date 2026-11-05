@@ -26,7 +26,7 @@ from _lib.http import graphql_get  # noqa: E402
 
 TASK = Path(__file__).resolve().parents[1]
 GRAPHQL = "https://www.discogs.com/service/catalog/api/graphql"
-LIST_SHA = "ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b"
+LIST_SHA = "91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9"
 EXPORT_COOKIES = Path("/home/box/discogs-auth/export_cookies.py")
 
 SEMI_MANUAL = """\

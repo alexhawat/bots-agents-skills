@@ -5,5 +5,5 @@
   - `GET /releases/{id}` → `series`
   - `GET {series.resource_url}/releases` (paginated) or `GET /database/search?type=release&q=…`
 - Collection ownership: existing `ViewerCollectionListData` via `_lib/collection_fetch.py`
-  sha `ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b`
+  sha `91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9`
 - Cookies/secrets redacted; never log Cookie.

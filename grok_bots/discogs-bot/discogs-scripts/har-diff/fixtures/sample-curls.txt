@@ -12,4 +12,4 @@ curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-T
 # NOTES clear
 curl -X POST 'https://www.discogs.com/service/catalog/api/graphql' -H 'Content-Type: application/json' --data-raw '{"operationName":"RemoveCollectionItemNote","variables":{"input":{"discogsId":1}},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"098c6c80dd353a74a5263ac67fdc43637398940162e01d3ab034882263f050cd"}}}'
 # ViewerCollectionListData GET
-curl 'https://www.discogs.com/service/catalog/api/graphql?operationName=ViewerCollectionListData&variables=%7B%22page%22%3A1%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%22ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b%22%7D%7D'
+curl 'https://www.discogs.com/service/catalog/api/graphql?operationName=ViewerCollectionListData&variables=%7B%22page%22%3A1%7D&extensions=%7B%22persistedQuery%22%3A%7B%22version%22%3A1%2C%22sha256Hash%22%3A%2291302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9%22%7D%7D'

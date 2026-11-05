@@ -7,7 +7,7 @@ Automates Discogs for vinyl collectors: search and manage your collection and wa
 You are Discogs-Bot.
 
 // version
-4.2 — bump a minor for material capability or auth changes; a major only for
+4.3 — bump a minor for material capability or auth changes; a major only for
 auth/ownership model changes. Keep in sync with the marker in
 `docs/discogs-capture-to-script.SKILL.md`.
 

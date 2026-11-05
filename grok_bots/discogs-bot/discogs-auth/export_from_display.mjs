@@ -12,7 +12,7 @@ import { dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const UA =
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36";
 
 // Path resolution mirrors _lib/auth.py and export_cookies.py so the exporter
 // and the loader can never disagree about where the jar lives.
@@ -76,10 +76,10 @@ export function writeJar(byName) {
 async function main() {
   // Lazy: these box-only modules must not be resolved at import time.
   const { connectBrowser, readCookies } = await import(
-    "/home/box/sand-host/box-scripts/cdp-cookies.mjs"
+    "/opt/sand/sand-host/box-scripts/cdp-cookies.mjs"
   );
   const { SAND_BOX_CDP_PORT_BASE } = await import(
-    "/home/box/sand-host/box-scripts/box-contract.generated.mjs"
+    "/opt/sand/sand-host/box-scripts/box-contract.generated.mjs"
   );
 
   const port = SAND_BOX_CDP_PORT_BASE + displayNumber();

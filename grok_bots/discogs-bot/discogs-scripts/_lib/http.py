@@ -14,7 +14,7 @@ from _lib.errors import DiscogsHTTPError
 
 DEFAULT_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+    "(KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
 )
 
 # Cap on any single retry wait so a hostile Retry-After can't stall a run.

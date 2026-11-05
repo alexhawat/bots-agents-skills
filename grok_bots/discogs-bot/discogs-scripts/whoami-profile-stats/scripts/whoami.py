@@ -23,7 +23,7 @@ TASK = Path(__file__).resolve().parents[1]
 GRAPHQL = "https://www.discogs.com/service/catalog/api/graphql"
 
 USER_PAGE_SHA = "4ec9e7cf35dfd68831890df31e7c2d9c32a9d13274db0aaebfd49f7f0331cd96"
-LIST_SHA = "ebc71d10939729462ee62c506326081612eccc8c93ea595d638b4af123835f1b"
+LIST_SHA = "91302e22b3c6df22424a92c0ebab5c536ed0640a35c4d1cabbe736919b50dda9"
 PAGE_STATS_SHA = "462fbd5e05a757bc5dde79635e33691c036119aea912c7d51c65e81154e4a2b7"
 
 
@@ -112,7 +112,7 @@ def fetch_value_stats(auth: dict[str, str], currency: str = "EUR") -> dict | Non
             endpoint=GRAPHQL,
             operation_name="ViewerCollectionPageData",
             sha256_hash=PAGE_STATS_SHA,
-            variables={"currency": currency, "search": ""},
+            variables={"currency": currency}  # HAR 2026-11-05 shape: currency only,
         )
     except DiscogsError as e:
         print(f"# value stats skipped: {e}", file=sys.stderr)
@@ -201,7 +201,7 @@ def main() -> None:
         print(f"  [{f['discogsId']}] {f['name']}: {f['totalCount']}")
     if out.get("collectionStats"):
         cs = out["collectionStats"]
-        print("collection value (ViewerCollectionPageData, search=\"\"):")
+        print("collection value (ViewerCollectionPageData):")
         print(f"  min:    {cs['min']}")
         print(f"  median: {cs['median']}")
         print(f"  max:    {cs['max']}")
