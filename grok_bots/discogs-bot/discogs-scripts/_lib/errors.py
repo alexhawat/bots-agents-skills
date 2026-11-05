@@ -2,7 +2,8 @@
 
 The library layer raises these instead of ``SystemExit`` so that callers can
 branch on failure *kind* (see auth-refresh, which needs to tell a dead session
-from a network blip) and so the parsers stay importable under test.
+from a network blip or a rotated persisted-query hash) and so the
+parsers stay importable under test.
 
 Scripts turn them into exit codes exactly once, in ``cli_main``.
 """
@@ -33,6 +34,31 @@ class DiscogsHTTPError(DiscogsError):
         self.body = body
         super().__init__(f"HTTP {status} for {url}: {body!r}")
 
+
+
+class PersistedQueryRotated(DiscogsError):
+    """Discogs rejected a persisted-query sha (hash rotation), not a dead session.
+
+    Distinct from ``DiscogsHTTPError`` so auth-refresh can refuse to re-export
+    cookies / re-login when the jar is fine and only the op hash is stale.
+    """
+
+    def __init__(
+        self,
+        operation_name: str | None = None,
+        *,
+        status: int | None = None,
+        body: bytes | str = b"",
+    ) -> None:
+        self.operation_name = operation_name
+        self.status = status
+        self.body = body
+        op = operation_name or "unknown"
+        super().__init__(
+            f"persisted query hash rotated for op={op}: re-capture the sha256 "
+            f"from a fresh HAR or catalog main.*.js, update the script SHA / "
+            f"har-diff fixtures/known-operations.json, then run har-diff"
+        )
 
 class DiscogsAPIError(DiscogsError):
     """Transport succeeded but the payload carried GraphQL ``errors``."""

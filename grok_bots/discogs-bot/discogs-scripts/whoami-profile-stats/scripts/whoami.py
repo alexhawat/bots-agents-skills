@@ -112,7 +112,8 @@ def fetch_value_stats(auth: dict[str, str], currency: str = "EUR") -> dict | Non
             endpoint=GRAPHQL,
             operation_name="ViewerCollectionPageData",
             sha256_hash=PAGE_STATS_SHA,
-            variables={"currency": currency}  # HAR 2026-11-05 shape: currency only,
+            # HAR 2026-11-05 shape: currency only
+            variables={"currency": currency},
         )
     except DiscogsError as e:
         print(f"# value stats skipped: {e}", file=sys.stderr)

@@ -7,7 +7,7 @@
 // when the file is run as a program (see the main guard at the bottom), and
 // the sand-host modules are imported lazily so the path helpers can be used
 // off-box where those modules do not exist.
-import { writeFileSync, chmodSync, mkdirSync } from "node:fs";
+import { writeFileSync, chmodSync, mkdirSync, existsSync } from "node:fs";
 import { dirname } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -73,13 +73,28 @@ export function writeJar(byName) {
   return { out, names };
 }
 
+/** Prefer the current box-image path, then the /usr/local/bin shim. */
+export function sandHostScriptsDir() {
+  const candidates = [
+    "/opt/sand/sand-host/box-scripts",
+    "/usr/local/bin",
+  ];
+  for (const dir of candidates) {
+    if (existsSync(`${dir}/cdp-cookies.mjs`)) return dir;
+  }
+  throw new Error(
+    "sand-host cdp-cookies.mjs not found under /opt/sand/sand-host/box-scripts or /usr/local/bin"
+  );
+}
+
 async function main() {
   // Lazy: these box-only modules must not be resolved at import time.
+  const sandDir = sandHostScriptsDir();
   const { connectBrowser, readCookies } = await import(
-    "/opt/sand/sand-host/box-scripts/cdp-cookies.mjs"
+    pathToFileURL(`${sandDir}/cdp-cookies.mjs`).href
   );
   const { SAND_BOX_CDP_PORT_BASE } = await import(
-    "/opt/sand/sand-host/box-scripts/box-contract.generated.mjs"
+    pathToFileURL(`${sandDir}/box-contract.generated.mjs`).href
   );
 
   const port = SAND_BOX_CDP_PORT_BASE + displayNumber();

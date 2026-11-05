@@ -182,3 +182,13 @@ def test_shipped_response_sample_is_synthetic():
         # Real collection item ids are ~10 digits and unpredictable; the
         # synthetic ones are a fixed, obviously-fake block.
         assert 1000000000 <= item["discogsId"] <= 1000000099
+
+
+def test_cdp_helper_probes_opt_then_usr_local_for_sand_host():
+    """Nit from PR review: do not hardcode a single sand-host path."""
+    from conftest import PACK_ROOT
+    src = (PACK_ROOT / "discogs-auth" / "export_from_display.mjs").read_text()
+    assert "sandHostScriptsDir" in src
+    assert "/opt/sand/sand-host/box-scripts" in src
+    assert "/usr/local/bin" in src
+    assert "cdp-cookies.mjs" in src

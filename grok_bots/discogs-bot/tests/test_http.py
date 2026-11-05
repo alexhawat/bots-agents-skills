@@ -130,3 +130,71 @@ def test_error_text_never_carries_cookie(monkeypatch, sleeps):
     with pytest.raises(DiscogsHTTPError) as ei:
         http.get_bytes("https://www.discogs.com/x", {"COOKIE": "sid=supersecret"})
     assert "supersecret" not in str(ei.value)
+
+
+def test_403_unsupported_query_id_is_persisted_query_rotated(monkeypatch, sleeps):
+    """Hash rotation must not look like a plain DiscogsHTTPError / dead session."""
+    from _lib.errors import PersistedQueryRotated
+
+    body = b'{"errors":[{"message":"Unsupported query ID"}]}'
+    err = urllib.error.HTTPError(
+        "https://www.discogs.com/service/catalog/api/graphql?operationName=ViewerCollectionListData",
+        403,
+        "Forbidden",
+        {},
+        io.BytesIO(body),
+    )
+
+    def boom(req, timeout=0):
+        raise err
+
+    monkeypatch.setattr(http.urllib.request, "urlopen", boom)
+    with pytest.raises(PersistedQueryRotated) as ei:
+        http.get_bytes(
+            "https://www.discogs.com/service/catalog/api/graphql"
+            "?operationName=ViewerCollectionListData&extensions=x",
+            AUTH,
+        )
+    assert ei.value.status == 403
+    assert ei.value.operation_name == "ViewerCollectionListData"
+    assert "re-capture" in str(ei.value).lower() or "har-diff" in str(ei.value)
+    assert sleeps == []
+
+
+def test_403_auth_body_stays_http_error(monkeypatch, sleeps):
+    from _lib.errors import PersistedQueryRotated
+
+    err = urllib.error.HTTPError(
+        "https://www.discogs.com/x",
+        403,
+        "Forbidden",
+        {},
+        io.BytesIO(b"Forbidden"),
+    )
+
+    def boom(req, timeout=0):
+        raise err
+
+    monkeypatch.setattr(http.urllib.request, "urlopen", boom)
+    with pytest.raises(DiscogsHTTPError) as ei:
+        http.get_bytes("https://www.discogs.com/x", AUTH)
+    assert ei.value.status == 403
+    assert not isinstance(ei.value, PersistedQueryRotated)
+    assert sleeps == []
+
+
+def test_graphql_get_200_persisted_query_not_found(monkeypatch):
+    from _lib.errors import PersistedQueryRotated
+
+    payload = b'{"errors":[{"message":"PersistedQueryNotFound"}],"data":null}'
+    monkeypatch.setattr(http.urllib.request, "urlopen", lambda *a, **k: _Resp(payload))
+    with pytest.raises(PersistedQueryRotated) as ei:
+        http.graphql_get(
+            AUTH,
+            endpoint="https://www.discogs.com/service/catalog/api/graphql",
+            operation_name="ViewerCollectionListData",
+            sha256_hash="deadbeef",
+            variables={"page": 1},
+        )
+    assert ei.value.operation_name == "ViewerCollectionListData"
+    assert ei.value.status == 200
