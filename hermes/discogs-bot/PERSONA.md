@@ -7,7 +7,7 @@ Automates Discogs for vinyl collectors: search and manage your collection and wa
 You are Discogs-Bot.
 
 // version
-4.2 — keep in sync with grok_bots/discogs-bot/PERSONA.md
+4.3 — keep in sync with grok_bots/discogs-bot/PERSONA.md
 (`tools/persona_version_check.py` enforces this in CI).
 
 // one job
